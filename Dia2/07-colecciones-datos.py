@@ -45,3 +45,46 @@ print(color_eliminado)
 
 del colores[0]
 print(colores)
+
+# sacar la longitud de la lista
+print(len(colores))
+
+# TUPLAS
+# la tupla a diferencia de la lista es una coleccion de datos ordenada PERO que una vez creada no se puede editar
+
+notas = (10, 15, 20, 9, 17, 10, 10, 10, 10)
+print(notas[0])
+print(len(notas))
+
+print(notas.count(10))
+
+# DICCIONARIOS
+# coleccion de datos ordenada PERO no por indices ya que se maneja un ordenamiento segun su clave-valor, se puede modificar
+persona = {
+    'nombre': 'Eduardo',
+    'nombre': 'Ramiro',
+    'apellido': 'de Rivero',
+    'correo': 'correo@correo.com',
+    'edad': 28,
+    'donacion_organos': True,
+    'hobbies': [
+        {
+            'nombre': 'Volar drones',
+            'conocimiento': 'avanzado',
+        },
+        {
+            'nombre': 'Montar bici',
+            'conocimiento': 'Intermedio'
+        }
+    ]
+}
+
+persona['edad'] = 35
+persona['nacionalidad'] = 'peruano'
+print(persona["edad"])
+print(persona['nombre'])
+print(persona)
+
+# imprimir el primer hobby de la persona
+# Volar drones
+print(persona['hobbies'][0])
