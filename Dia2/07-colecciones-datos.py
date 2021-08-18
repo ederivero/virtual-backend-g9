@@ -88,3 +88,12 @@ print(persona)
 # imprimir el primer hobby de la persona
 # Volar drones
 print(persona['hobbies'][0])
+
+# forma de extraer solamente las llaves
+print(persona.keys())
+
+# forma de extraer solamente los valores
+print(persona.values())
+
+persona.clear()
+print(persona)
