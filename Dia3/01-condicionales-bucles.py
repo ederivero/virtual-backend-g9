@@ -156,9 +156,20 @@ while numero < 10:
     numero += 1
     print(numero)
 
+print("=============================")
 
 # ingresar numeros hasta que ese numero sea adivinado
 numero_adivinar = 10
 # 5 => 'el numero es mayor que ese'
 # 13 => 'el numero es menor que ese'
 # 10 => 'felicidades adivinaste el numero'
+
+while True:
+    numero = int(input('Ingresa el numero: '))
+    if numero < numero_adivinar:
+        print('El numero es mayor que {}'.format(numero))
+    elif numero > numero_adivinar:
+        print('El numero es menor que {}'.format(numero))
+    elif numero == numero_adivinar:
+        print('Felicidades adivinaste el numero')
+        break
