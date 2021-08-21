@@ -21,6 +21,7 @@ class Vehiculo:
         resultado = self.__verificar_alarma()
         if resultado:
             self.enMarcha = estado
+            print("El vehiculo puede andar correctamente 🚗🚗")
         else:
             print("El vehiculo intenta ser robado 🚨🚨🚨")
 
@@ -36,3 +37,21 @@ objVehiculo.toggle_alarma()
 
 print(objVehiculo.encender())
 # print(objVehiculo.alarma)
+
+
+class Persona:
+    def __init__(self, nombre, apellido, correo, password):
+        self.nombre = nombre
+        self.apellido = apellido
+        self.correo = correo
+        self.password = self.__encriptar_password(password)
+
+    def __encriptar_password(self, password):
+        return "asdfasdfasdfasdf"+password+"asdasdadadada"
+
+
+objPersona = Persona(nombre="Raul", apellido="Perez",
+                     correo="rperez@empresa.com", password="123456")
+
+
+print(objPersona.password)
