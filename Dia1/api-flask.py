@@ -40,7 +40,7 @@ def gestion_productos():
         return {
             "message": "Producto Creado exitosamente",
             "content": producto
-        }
+        }, 201
 
 
 @app.route("/producto/<int:id>", methods=['GET'])
@@ -53,12 +53,12 @@ def gestion_producto(id):
         return {
             "content": productos[id],
             "message": None
-        }
+        }, 200
     else:
         return {
             "message": "Producto no encontrado",
             "content": None
-        }
+        }, 404
 
 
 if __name__ == "__main__":
