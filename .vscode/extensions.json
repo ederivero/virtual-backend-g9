@@ -8,6 +8,7 @@
         "ritwickdey.liveserver",
         "usernamehw.errorlens",
         "coenraads.bracket-pair-colorizer-2",
-        "pkief.material-icon-theme"
+        "pkief.material-icon-theme",
+        "pnp.polacode"
 	]
 }
