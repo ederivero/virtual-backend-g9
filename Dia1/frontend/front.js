@@ -29,6 +29,7 @@ btnProductos.addEventListener("click", async () => {
 });
 
 btnAgregar.onclick = async (e) => {
+  e.preventDefault();
   console.log(nombre_producto.value);
   console.log(precio_producto.value);
 
