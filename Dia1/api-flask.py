@@ -28,7 +28,7 @@ def gestion_productos():
     print(request.method)
     if request.method == 'GET':
         return {
-            "message": "",
+            "message": None,
             "content": productos
         }
 
