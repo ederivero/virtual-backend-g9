@@ -3,7 +3,7 @@ from conexion_bd import base_de_datos
 from sqlalchemy import Column, types
 
 
-class IngredientesModel(base_de_datos.Model):
+class IngredienteModel(base_de_datos.Model):
     __tablename__ = 'ingredientes'
 
     # id int primary key not null unique auto_increment,

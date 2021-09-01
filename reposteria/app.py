@@ -1,14 +1,18 @@
 from flask import Flask
 from conexion_bd import base_de_datos
-from models.ingrediente import IngredientesModel
+from models.ingrediente import IngredienteModel
 from models.receta import RecetaModel
 from models.preparacion import PreparacionModel
 from models.recetas_ingredientes import RecetaIngredienteModel
+
+from controllers.ingrediente import IngredientesController
+from flask_restful import Api
 from os import environ
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+api = Api(app=app)
 #                                        mysql://username:password@host/db_name
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URI')
 # si se establece True SqlAchemy rastreara las modificaciones de los objetos (modelos) y lanzara señales de cambio, su valor predeterminado es None . igual habilita el tracking pero emite una advertencia que en futuras versiones se removera el valor x default None y si o si tendremos que indicar un valor inicial
@@ -27,6 +31,9 @@ def initial_controller():
         "message": "Bienvenido a mi API de REPOSTERIA 🥧"
     }
 
+
+# ZONA DE ENRUTAMIENTO
+api.add_resource(IngredientesController, '/ingredientes')
 
 if __name__ == '__main__':
     app.run(debug=True)
