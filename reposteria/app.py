@@ -2,10 +2,15 @@ from flask import Flask
 from conexion_bd import base_de_datos
 from models.ingrediente import IngredientesModel
 from models.receta import RecetaModel
+from models.preparacion import PreparacionModel
+from models.recetas_ingredientes import RecetaIngredienteModel
+from os import environ
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 #                                        mysql://username:password@host/db_name
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost:3306/reposteria_flask'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URI')
 # si se establece True SqlAchemy rastreara las modificaciones de los objetos (modelos) y lanzara señales de cambio, su valor predeterminado es None . igual habilita el tracking pero emite una advertencia que en futuras versiones se removera el valor x default None y si o si tendremos que indicar un valor inicial
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
