@@ -1,5 +1,8 @@
 from flask_restful import Resource, request, reqparse
+import sqlalchemy
 from models.ingrediente import IngredienteModel
+from models.log import LogModel
+from conexion_bd import base_de_datos
 
 # serializador => elemento que convierte los parametros que me envia el front para tener un uso correcto en el backend
 serializador = reqparse.RequestParser()
@@ -22,8 +25,28 @@ class IngredientesController(Resource):
     def post(self):
         # validar en base a los argumentos indicados si esta cumpliendo o no el front con pasar dicha informacion
         data = serializador.parse_args()
-        nuevoIngrediente = IngredienteModel(ingredienteNombre=data['nombre'])
-        print(nuevoIngrediente)
-        return {
-            "message": "Bienvenido al post"
-        }
+        try:
+            nuevoIngrediente = IngredienteModel(
+                ingredienteNombre=data['nombre'])
+            # inicializando una transaccion
+            base_de_datos.session.add(nuevoIngrediente)
+            base_de_datos.session.commit()
+            # print(nuevoIngrediente.__dict__)
+            json = {
+                "id": nuevoIngrediente.ingredienteId,
+                "nombre": nuevoIngrediente.ingredienteNombre
+            }
+            return {
+                "message": "Ingrediente creado exitosamente",
+                "content": json
+            }, 201
+        except sqlalchemy.exc.DataError as err:
+            base_de_datos.session.rollback()
+            nuevoLog = LogModel()
+            nuevoLog.logRazon = str(err)
+            base_de_datos.session.add(nuevoLog)
+            base_de_datos.session.commit()
+
+            return {
+                "message": "Error al ingresar el ingrediente"
+            }, 500
