@@ -17,9 +17,19 @@ serializador.add_argument(
 
 class IngredientesController(Resource):
     def get(self):
+        ingredientes = base_de_datos.session.query(IngredienteModel).all()
+        print(ingredientes)
+        resultado = []
+        for ingrediente in ingredientes:
+            print(ingrediente)
+            print(ingrediente.__dict__)
+            ingrediente_dicc = ingrediente.__dict__
+            del ingrediente_dicc['_sa_instance_state']
+            resultado.append(ingrediente_dicc)
         print("Ingreso al get")
         return {
-            "message": "Bievenido al get"
+            "message": None,
+            "content": resultado
         }
 
     def post(self):
@@ -69,3 +79,24 @@ class IngredientesController(Resource):
                 nuevoLog.logRazon = str(error)
                 base_de_datos.session.add(nuevoLog)
                 base_de_datos.session.commit()
+
+
+class IngredienteController(Resource):
+    def get(self, id):
+        resultado1 = base_de_datos.session.query(
+            IngredienteModel).filter(IngredienteModel.ingredienteId == id).first()
+
+        resultado2 = base_de_datos.session.query(
+            IngredienteModel).filter_by(ingredienteId=id).first()
+
+        print(resultado1)
+        print(resultado2)
+        return {
+            "message": id
+        }
+
+    def put(self):
+        pass
+
+    def delete(self):
+        pass
