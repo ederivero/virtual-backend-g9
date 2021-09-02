@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 base_de_datos.init_app(app)
 
 # eliminara todas las tablas registradas en nuestro proyecto
-base_de_datos.drop_all(app=app)
+# base_de_datos.drop_all(app=app)
 
 
 # creara las tablas aun no mapeadas y si todo esta bien no devolvera nada

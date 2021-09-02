@@ -16,11 +16,11 @@ serializador.add_argument(
 
 
 class IngredientesController(Resource):
-    # def get(self):
-    #     print("Ingreso al get")
-    #     return {
-    #         "message": "Bievenido al get"
-    #     }
+    def get(self):
+        print("Ingreso al get")
+        return {
+            "message": "Bievenido al get"
+        }
 
     def post(self):
         # validar en base a los argumentos indicados si esta cumpliendo o no el front con pasar dicha informacion
@@ -36,17 +36,36 @@ class IngredientesController(Resource):
                 "id": nuevoIngrediente.ingredienteId,
                 "nombre": nuevoIngrediente.ingredienteNombre
             }
+            error = None
             return {
                 "message": "Ingrediente creado exitosamente",
                 "content": json
             }, 201
         except sqlalchemy.exc.DataError as err:
-            base_de_datos.session.rollback()
-            nuevoLog = LogModel()
-            nuevoLog.logRazon = str(err)
-            base_de_datos.session.add(nuevoLog)
-            base_de_datos.session.commit()
-
+            error = err
             return {
                 "message": "Error al ingresar el ingrediente"
             }, 500
+
+        except sqlalchemy.exc.IntegrityError as err:
+            error = err
+            return {
+                "message": "Ese ingrediente ya existe"
+            }, 500
+
+        except Exception as err:
+            error = err
+            print(err)
+            return {
+                "message": "Error Desconocido"
+            }, 500
+
+        finally:
+            # se va a ejecutar si ingreso o no ingreso a algun except
+            print('ingreso al finally')
+            if error is not None:
+                base_de_datos.session.rollback()
+                nuevoLog = LogModel()
+                nuevoLog.logRazon = str(error)
+                base_de_datos.session.add(nuevoLog)
+                base_de_datos.session.commit()
