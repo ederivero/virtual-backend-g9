@@ -153,3 +153,44 @@ class IngredienteController(Resource):
             "message": "Ingrediente eliminado exitosamente",
             "content": None
         }, 204
+
+
+serializadorFiltro = reqparse.RequestParser()
+serializadorFiltro.add_argument(
+    'nombre',
+    location='args',  # tiene que ser enviado por lo querystrings http://127.0.0.1/ruta?nombre=valor&nombre2=valor2
+    required=False,
+    type=str
+)
+
+
+class FiltroIngredientesController(Resource):
+    def get(self):
+        filtros = serializadorFiltro.parse_args()
+        # resultado = base_de_datos.session.query(IngredienteModel).filter(
+        #     IngredienteModel.ingredienteNombre.like('%a%')).all()
+        # print(filtros)
+        # print(resultado)
+        # resultado_final = []
+        # for ingrediente in resultado:
+        #     print(type(ingrediente))
+        #     ingrediente_dicc = ingrediente.__dict__.copy()
+        #     del ingrediente_dicc['_sa_instance_state']
+        #     print(ingrediente_dicc)
+        #     resultado_final.append(ingrediente_dicc)
+        # return {
+        #     "content": resultado_final
+        # }
+
+        resultado = base_de_datos.session.query(
+            IngredienteModel).filter(IngredienteModel.ingredienteNombre.like('%' + filtros['nombre'] + '%')).with_entities(IngredienteModel.ingredienteNombre, IngredienteModel.ingredienteId).all()
+        # A diferencia de hacer solamente un .all() sin un with_entities esto nos retonara una lista de objetos de la clase Row https://docs.sqlalchemy.org/en/14/core/connections.html?highlight=asdict#sqlalchemy.engine.Row
+        # print(resultado)
+        resultado_final = []
+        for registro in resultado:
+            resultado_final.append(registro._asdict())
+            # print(type(registro))
+            # print(registro._asdict())
+        return {
+            "content": resultado_final
+        }
