@@ -54,7 +54,7 @@ class IngredientesController(Resource):
         except sqlalchemy.exc.DataError as err:
             error = err
             return {
-                "message": "Error al ingresar el ingrediente"
+                "message": "El ingrediente supera el maximo de caracteres (45)"
             }, 500
 
         except sqlalchemy.exc.IntegrityError as err:
@@ -83,20 +83,73 @@ class IngredientesController(Resource):
 
 class IngredienteController(Resource):
     def get(self, id):
-        resultado1 = base_de_datos.session.query(
+        resultado = base_de_datos.session.query(
             IngredienteModel).filter(IngredienteModel.ingredienteId == id).first()
 
         resultado2 = base_de_datos.session.query(
             IngredienteModel).filter_by(ingredienteId=id).first()
 
-        print(resultado1)
-        print(resultado2)
+        if resultado:
+            data = resultado.__dict__
+            # https://docs.sqlalchemy.org/en/14/orm/internals.html#sqlalchemy.orm.InstanceState
+            # devuelve la instancia de la cual se esta extrayendo la informacion del registro de la base de datos
+            print(data["_sa_instance_state"].dict)
+            del data['_sa_instance_state']
+            return {
+                "message": None,
+                "content": data
+            }
+        else:
+            return {
+                "message": "El ingrediente no existe",
+                "content": resultado
+            }, 404
+
+    def put(self, id):
+        # ingrediente = base_de_datos.session.query(IngredienteModel).filter(
+        #     IngredienteModel.ingredienteId == id).first()
+        # if ingrediente is None:
+        #     return {
+        #         "message": "El ingrediente no existe",
+        #         "content": None
+        #     }, 404
+
+        # data = serializador.parse_args()
+        # print(ingrediente.__dict__)
+        # ingrediente.ingredienteNombre = data['nombre']
+        # # base_de_datos.session.(ingrediente)
+        # respuesta = ingrediente.__dict__.copy()
+        # base_de_datos.session.commit()
+        # del respuesta['_sa_instance_state']
+
+        # return {
+        #     "message": "El ingrediente existe",
+        #     "content": respuesta
+        # }
+        data = serializador.parse_args()
+        resultado = base_de_datos.session.query(IngredienteModel).filter(
+            IngredienteModel.ingredienteId == id).update(
+                {
+                    IngredienteModel.ingredienteNombre: data['nombre']
+                }, synchronize_session='fetch')
+
+        base_de_datos.session.commit()
+        if resultado == 0:
+            return {
+                "message": "No hubo ingrediente a actualizar",
+                "content": None
+            }, 404
+        else:
+            return {
+                "message": "El ingrediente fue actualizado exitosamente",
+                "content": None
+            }, 204
+
+    def delete(self, id):
+        base_de_datos.session.query(IngredienteModel).filter(
+            IngredienteModel.ingredienteId == id).delete()
+        base_de_datos.session.commit()
         return {
-            "message": id
-        }
-
-    def put(self):
-        pass
-
-    def delete(self):
-        pass
+            "message": "Ingrediente eliminado exitosamente",
+            "content": None
+        }, 204
