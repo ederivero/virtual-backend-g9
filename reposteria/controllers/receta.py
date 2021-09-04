@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from sqlalchemy.sql.expression import true
 from models.receta import RecetaModel
 from conexion_bd import base_de_datos
+from math import ceil
 # CREAR RECETA
 # DEVOLVER RECETAS PAGINADAS
 
@@ -68,7 +69,45 @@ class RecetasController(Resource):
 
         data = self.serializador.parse_args()
 
+        # ------------ HELPER DE PAGINACION (AYUDANTE)
+        perPage = data['perPage']
+        page = data['page']
+        limit = perPage
+        offset = (page - 1) * limit
+        # ------------ FIN DEL HELPER
+
+        # CREAMOS LOS DATOS DE LA PAGINACION
+        # SELECT count(*) FROM recetas;
+        total = base_de_datos.session.query(RecetaModel).count()
+        print(total)
+        itemsPorPagina = perPage if total >= perPage else None
+        totalPaginas = ceil(total / itemsPorPagina)
+        if page > 1:
+            paginaPrevia = page - 1 if page <= totalPaginas else None
+        else:
+            paginaPrevia = None
+        if totalPaginas > 1:
+            paginaSiguiente = page + 1 if page < totalPaginas else None
+        else:
+            paginaSiguiente = None
+        # FIN DE CREACION
+
+        recetas = base_de_datos.session.query(
+            RecetaModel).limit(limit).offset(offset).all()
+        resultado = []
+        for receta in recetas:
+            recetaDict = receta.__dict__
+            del recetaDict['_sa_instance_state']
+            recetaDict['recetaPorcion'] = recetaDict['recetaPorcion'].value
+            resultado.append(recetaDict)
         print(data)
         return {
-            "content": "Las recetas son:"
+            "content": resultado,
+            "pagination": {
+                "total": total,
+                "perPages": itemsPorPagina,
+                "paginaPrevia": paginaPrevia,
+                "paginaSiguiente": paginaSiguiente,
+                "totalPaginas": totalPaginas
+            }
         }
