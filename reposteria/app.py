@@ -9,6 +9,7 @@ from models.log import LogModel
 from controllers.ingrediente import (IngredientesController,
                                      IngredienteController,
                                      FiltroIngredientesController)
+from controllers.receta import RecetasController
 from flask_restful import Api
 from os import environ
 from dotenv import load_dotenv
@@ -43,6 +44,7 @@ def initial_controller():
 api.add_resource(IngredientesController, '/ingredientes')
 api.add_resource(IngredienteController, '/ingrediente/<int:id>')
 api.add_resource(FiltroIngredientesController, '/buscar_ingrediente')
+api.add_resource(RecetasController, '/recetas')
 
 if __name__ == '__main__':
     app.run(debug=True)
