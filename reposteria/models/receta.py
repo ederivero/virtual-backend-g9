@@ -30,3 +30,6 @@ class RecetaModel(base_de_datos.Model):
     # https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#one-to-many-relationships
     preparaciones = orm.relationship(
         'PreparacionModel', backref='preparacionRecetas', lazy=True)
+
+    recetas_ingredientes = orm.relationship(
+        'RecetaIngredienteModel', backref='recetaIngredienteRecetas')
