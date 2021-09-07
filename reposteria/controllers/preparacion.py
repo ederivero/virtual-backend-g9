@@ -32,7 +32,7 @@ class PreparacionesController(Resource):
     def get(self, id):
         preparacion = base_de_datos.session.query(PreparacionModel).filter(
             PreparacionModel.preparacionId == id).first()
-        print(preparacion)
+        # print(preparacion.preparacionRecetas)
         preparacionDict = preparacion.__dict__.copy()
         del preparacionDict['_sa_instance_state']
 

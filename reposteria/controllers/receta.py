@@ -111,3 +111,28 @@ class RecetasController(Resource):
                 "totalPaginas": totalPaginas
             }
         }
+
+
+class RecetaController(Resource):
+
+    def get(self, id):
+        receta = base_de_datos.session.query(RecetaModel).filter(
+            RecetaModel.recetaId == id).first()
+
+        diccionario_receta = receta.__dict__.copy()
+        del diccionario_receta['_sa_instance_state']
+        diccionario_receta['recetaPorcion'] = receta.recetaPorcion.value
+
+        diccionario_receta['preparaciones'] = []
+
+        for preparacion in receta.preparaciones:
+            diccionario_preparacion = preparacion.__dict__.copy()
+            del diccionario_preparacion['_sa_instance_state']
+            diccionario_receta['preparaciones'].append(diccionario_preparacion)
+            print(preparacion.__dict__)
+
+        print(diccionario_receta)
+        # print(receta.preparaciones[0])
+        return {
+            "message": diccionario_receta
+        }

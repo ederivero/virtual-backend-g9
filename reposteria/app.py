@@ -9,7 +9,7 @@ from models.log import LogModel
 from controllers.ingrediente import (IngredientesController,
                                      IngredienteController,
                                      FiltroIngredientesController)
-from controllers.receta import RecetasController
+from controllers.receta import RecetasController, RecetaController
 from controllers.receta_ingrediente import RecetaIngredientesController
 from controllers.preparacion import PreparacionesController
 
@@ -47,8 +47,12 @@ def initial_controller():
 api.add_resource(IngredientesController, '/ingredientes')
 api.add_resource(IngredienteController, '/ingrediente/<int:id>')
 api.add_resource(FiltroIngredientesController, '/buscar_ingrediente')
+
 api.add_resource(RecetasController, '/recetas')
+api.add_resource(RecetaController, '/receta/<int:id>')
+
 api.add_resource(RecetaIngredientesController, '/recetas_ingredientes')
+
 api.add_resource(PreparacionesController, '/preparaciones',
                  '/preparaciones/<int:id>')
 

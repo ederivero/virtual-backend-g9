@@ -24,3 +24,6 @@ class PreparacionModel(base_de_datos.Model):
     # https://docs.sqlalchemy.org/en/14/core/constraints.html?highlight=ondelete#sqlalchemy.schema.ForeignKey.params.ondelete
     receta = Column(ForeignKey(column='recetas.id', ondelete='RESTRICT'),
                     name='recetas_id', type_=types.Integer, nullable=False)
+
+    def __str__(self):
+        return self.preparacionDescripcion
