@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "f2998073-5899-4463-93a3-802860001ac7",
+		"name": "Reposteria Flask",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ingredientes",
+			"item": [
+				{
+					"name": "/ingredientes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\":\"Arroz de trigo4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/ingredientes",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"ingredientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ingredientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/ingredientes",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"ingredientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ingrediente/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/ingrediente/1",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"ingrediente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ingrediente/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\":\"Jalapeño\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/ingrediente/1121",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"ingrediente",
+								"1121"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ingrediente/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/ingrediente/1",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"ingrediente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/buscar_ingrediente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "recetas",
+			"item": [
+				{
+					"name": "/recetas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\":\"Palta Rellena\",\r\n    \"porcion\": \"personal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/recetas",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"recetas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/recetas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/recetas?page=59&perPage=7",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"recetas"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "59"
+								},
+								{
+									"key": "perPage",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/receta/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/receta/200",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"receta",
+								"200"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "recetas_ingredientes",
+			"item": [
+				{
+					"name": "/recetas_ingredientes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receta_id\": 100,\r\n    \"ingredientes_id\": [1,2]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/recetas_ingredientes",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"recetas_ingredientes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "preparaciones",
+			"item": [
+				{
+					"name": "/preparaciones",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receta_id\":1,\r\n    \"orden\": 2,\r\n    \"descripcion\": \"Echar el pollo al agua hirviendo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_local}}/preparaciones",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"preparaciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/preparaciones/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_local}}/preparaciones/1",
+							"host": [
+								"{{url_local}}"
+							],
+							"path": [
+								"preparaciones",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url_local",
+			"value": "http://127.0.0.1:5000"
+		}
+	]
+}
