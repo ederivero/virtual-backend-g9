@@ -34,3 +34,4 @@ toml==0.10.2
 traceback2==1.4.0
 unittest2==1.1.0
 Werkzeug==2.0.1
+uwsgi
