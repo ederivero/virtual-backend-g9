@@ -146,13 +146,19 @@ class IngredienteController(Resource):
             }, 204
 
     def delete(self, id):
-        base_de_datos.session.query(IngredienteModel).filter(
-            IngredienteModel.ingredienteId == id).delete()
-        base_de_datos.session.commit()
-        return {
-            "message": "Ingrediente eliminado exitosamente",
-            "content": None
-        }, 204
+        try:
+            base_de_datos.session.query(IngredienteModel).filter(
+                IngredienteModel.ingredienteId == id).delete()
+            base_de_datos.session.commit()
+            return {
+                "message": "Ingrediente eliminado exitosamente",
+                "content": None
+            }, 204
+        except:
+            return {
+                "message": "Error al eliminar el ingrediente",
+                "content": None
+            }, 500
 
 
 serializadorFiltro = reqparse.RequestParser()

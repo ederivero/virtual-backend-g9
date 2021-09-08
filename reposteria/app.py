@@ -16,9 +16,38 @@ from controllers.preparacion import PreparacionesController
 from flask_restful import Api
 from os import environ
 from dotenv import load_dotenv
+from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
+
+
 load_dotenv()
 
+# CONFIGURACION SWAGGER FLASK
+
+# ESTA variable se usa para indicar en que ruta (endpoint) se encontrara la documentacion
+SWAGGER_URL = "/api/docs"
+# indicar la ubicacion del archivo JSON
+API_URL = "/static/swagger.json"
+swagger_blueprint = get_swaggerui_blueprint(
+    base_url=SWAGGER_URL,
+    api_url=API_URL,
+    config={
+        'app_name': 'Reposteria Flask - Documentacion Swagger'
+    }
+)
+# FIN DE CONFIGURACION
+
+
 app = Flask(__name__)
+# los blueprints sirven para registrar en el caso que nosotros tengamos un proyecto interno y quuerramos agregarlo al proyecto principal de flask
+app.register_blueprint(swagger_blueprint)
+
+# origin => sirve para indicar que dominios pueden acceder a mi API , x defecto su valor es '*' que permitira acceder a todos los origenes
+# methods => sirve para indicar que metodos pueden consultarse a la API , x defecto su valor es  [GET, HEAD, POST, OPTIONS, PUT, PATCH, DELETE]
+# headers => sirve para indicar que CABECERAS pueden enviarse, x defecto su valor es '*'
+CORS(app=app, origins='*', methods=['GET',
+     'POST', 'PUT', 'DELETE'], allow_headers='Content-Type')
+
 api = Api(app=app)
 #                                        mysql://username:password@host/db_name
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URI')
