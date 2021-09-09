@@ -1,0 +1,3 @@
+\l => lista todas las bases de datos en mi servidor
+\c nombre_bd => conectarse o usar una determinada base de datos 
+\d => lista todas las tablas de esa base de datos
