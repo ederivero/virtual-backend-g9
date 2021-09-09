@@ -13,7 +13,7 @@
   "host": "reposteria-eduardo.herokuapp.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "consumes": [
     "application/json"
