@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from config.conexion_bd import base_de_datos
 from models.Tarea import TareaModel
-from controllers.Usuario import RegistroController
+from controllers.Usuario import RegistroController, LoginController
 
 from dotenv import load_dotenv
 from os import environ
@@ -22,7 +22,7 @@ base_de_datos.create_all(app=app)
 
 # RUTAS
 api.add_resource(RegistroController, '/registro')
-
+api.add_resource(LoginController, '/login')
 
 if __name__ == '__main__':
     app.run(debug=True)
