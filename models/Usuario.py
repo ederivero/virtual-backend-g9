@@ -1,5 +1,5 @@
 from config.conexion_bd import base_de_datos
-from sqlalchemy import Column, types
+from sqlalchemy import Column, orm, types
 
 
 class UsuarioModel(base_de_datos.Model):
@@ -21,3 +21,5 @@ class UsuarioModel(base_de_datos.Model):
 
     usuarioTelefono = Column(
         name='telefono', type_=types.String(15), nullable=True)
+
+    tareas = orm.relationship('TareaModel', backref='tareaUsuario')
