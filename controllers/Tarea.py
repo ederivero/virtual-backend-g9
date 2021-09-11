@@ -29,7 +29,7 @@ class TareasController(Resource):
     )
     serializador.add_argument(
         'estado',
-        choices=['por_hacer', 'haciendo', 'finalizado'],
+        choices=['POR_HACER', 'HACIENDO', 'FINALIZADO'],
         type=str,
         help='Falta el estado',
         required=True,
@@ -39,17 +39,52 @@ class TareasController(Resource):
     @jwt_required()
     def post(self):
         data = self.serializador.parse_args()
-        nuevaTarea = TareaModel()
-        nuevaTarea.tareaDescripcion = data.get('descripcion')
-        nuevaTarea.tareaEstado = data.get('estado')
-        nuevaTarea.tareaTags = data.get('tags')
-        nuevaTarea.tareaTitulo = data.get('titulo')
-        print(current_identity)
-        return {
-            "message": "Tarea creada exitosamente",
-            "content": None
-        }, 201
+        try:
+            nuevaTarea = TareaModel()
+            nuevaTarea.tareaDescripcion = data.get('descripcion')
+            nuevaTarea.tareaEstado = data.get('estado')
+            nuevaTarea.tareaTags = data.get('tags')
+            nuevaTarea.tareaTitulo = data.get('titulo')
+            nuevaTarea.usuario = current_identity.get('usuarioId')
+
+            base_de_datos.session.add(nuevaTarea)
+            base_de_datos.session.commit()
+            print(current_identity)
+            return {
+                "message": "Tarea creada exitosamente",
+                "content": {
+                    "tareaId": nuevaTarea.tareaId,
+                    "tareaDescripcion": nuevaTarea.tareaDescripcion,
+                    "tareaEstado": nuevaTarea.tareaEstado.value,
+                    "tareaTags": nuevaTarea.tareaTags,
+                    "tareaTitulo": nuevaTarea.tareaTitulo,
+                    "tareaFechaCreacion": str(nuevaTarea.tareaFechaCreacion),
+                    "usuario": nuevaTarea.usuario,
+                }
+            }, 201
+        except Exception as e:
+            base_de_datos.session.rollback()
+            return{
+                "message": "Error al crear la tarea",
+                "content": e.args
+            }, 400
 
     @jwt_required()
     def get(self):
-        pass
+        tareasEncontradas = base_de_datos.session.query(TareaModel).filter(
+            TareaModel.usuario == current_identity.get('usuarioId')).all()
+        resultado = []
+        for tarea in tareasEncontradas:
+            tareaDict = tarea.__dict__.copy()
+            del tareaDict['_sa_instance_state']
+            tareaDict['tareaFechaCreacion'] = str(
+                tareaDict['tareaFechaCreacion'])
+
+            tareaDict['tareaEstado'] = tareaDict['tareaEstado'].value
+
+            resultado.append(tareaDict)
+        # devolver todas las tareas correspondiente al usuario del current_identity
+        return{
+            "message": None,
+            "content": resultado
+        }

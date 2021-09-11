@@ -192,6 +192,7 @@ class UsuarioController(Resource):
         usuarioEncontrado = base_de_datos.session.query(
             UsuarioModel).filter(UsuarioModel.usuarioId == usuarioId).first()
         # operador ternario
+        # TODO hacer que si el usuario envia la password entonces modificarla pero previamente usar bcrypt para encriptar la contraseña
         usuarioActualizado = base_de_datos.session.query(
             UsuarioModel).update({
                 "usuarioNombre": data.get('nombre') if data.get(
