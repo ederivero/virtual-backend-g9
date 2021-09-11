@@ -3,6 +3,7 @@ from re import search
 from bcrypt import hashpw, gensalt, checkpw
 from models.Usuario import UsuarioModel
 from config.conexion_bd import base_de_datos
+from flask_jwt import jwt_required, current_identity
 
 
 PATRON_CORREO = r'\w+[@]\w+[.]\w{2,3}'
@@ -123,7 +124,25 @@ class LoginController(Resource):
             }, 404
         password = bytes(data.get('password'), 'utf-8')
         usuarioPwd = bytes(usuario.usuarioPassword, 'utf-8')
-        print(checkpw(password, usuarioPwd))
-        return{
-            "message": "Usuario encontrado"
+        resultado = checkpw(password, usuarioPwd)
+        if resultado:
+            return{
+                "message": "Usuario encontrado"
+            }
+        else:
+            return {
+                "message": "Usuario no encontrado"
+            }, 400
+
+
+class UsuarioController(Resource):
+
+    # con el decorador indicamos que este metodo de esta clase va a ser protegido
+    @jwt_required()
+    def get(self):
+        print(current_identity)
+        del current_identity['_sa_instance_state']
+        del current_identity['usuarioPassword']
+        return {
+            "content": current_identity
         }
