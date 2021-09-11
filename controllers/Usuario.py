@@ -146,3 +146,69 @@ class UsuarioController(Resource):
         return {
             "content": current_identity
         }
+
+    @jwt_required()
+    def patch(self):
+        serializador = reqparse.RequestParser()
+        serializador.add_argument(
+            'nombre',
+            type=str,
+            location='json',
+            required=False,
+        )
+
+        serializador.add_argument(
+            'apellido',
+            type=str,
+            location='json',
+            required=False,
+        )
+
+        serializador.add_argument(
+            'correo',
+            type=str,
+            location='json',
+            required=False,
+        )
+
+        serializador.add_argument(
+            'password',
+            type=str,
+            location='json',
+            required=False,
+        )
+
+        serializador.add_argument(
+            'telefono',
+            type=str,
+            location='json',
+            required=False,
+        )
+
+        data = serializador.parse_args()
+        print(data.get('nombre') if data.get(
+            'nombre') is not None else 'shrek')
+        usuarioId = current_identity.get('usuarioId')
+        usuarioEncontrado = base_de_datos.session.query(
+            UsuarioModel).filter(UsuarioModel.usuarioId == usuarioId).first()
+        # operador ternario
+        usuarioActualizado = base_de_datos.session.query(
+            UsuarioModel).update({
+                "usuarioNombre": data.get('nombre') if data.get(
+                    'nombre') is not None else usuarioEncontrado.usuarioNombre,
+
+                "usuarioApellido": data.get('apellido') if data.get(
+                    'apellido') is not None else usuarioEncontrado.usuarioApellido,
+
+                UsuarioModel.usuarioCorreo: data.get('correo') if data.get(
+                    'correo') is not None else usuarioEncontrado.usuarioCorreo,
+
+                UsuarioModel.usuarioTelefono: data.get('telefono') if data.get(
+                    'telefono') is not None else usuarioEncontrado.usuarioTelefono,
+            })
+        print(usuarioActualizado)
+        base_de_datos.session.commit()
+
+        return {
+            "message": "Usuario actualizado exitosamente"
+        }
