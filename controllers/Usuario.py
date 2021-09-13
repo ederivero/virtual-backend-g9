@@ -186,13 +186,19 @@ class UsuarioController(Resource):
         )
 
         data = serializador.parse_args()
-        print(data.get('nombre') if data.get(
-            'nombre') is not None else 'shrek')
+        print(data)
         usuarioId = current_identity.get('usuarioId')
         usuarioEncontrado = base_de_datos.session.query(
             UsuarioModel).filter(UsuarioModel.usuarioId == usuarioId).first()
         # operador ternario
         # TODO hacer que si el usuario envia la password entonces modificarla pero previamente usar bcrypt para encriptar la contraseña
+        nuevaPwd = None
+        if data.get('password') is not None:
+            print('hay password')
+            pwdb = bytes(data.get('password'), 'utf-8')
+            salt = gensalt(rounds=10)
+            nuevaPwd = hashpw(pwdb, salt).decode('utf-8')
+        print(nuevaPwd)
         usuarioActualizado = base_de_datos.session.query(
             UsuarioModel).update({
                 "usuarioNombre": data.get('nombre') if data.get(
@@ -206,6 +212,8 @@ class UsuarioController(Resource):
 
                 UsuarioModel.usuarioTelefono: data.get('telefono') if data.get(
                     'telefono') is not None else usuarioEncontrado.usuarioTelefono,
+
+                UsuarioModel.usuarioPassword: nuevaPwd if nuevaPwd is not None else usuarioEncontrado.usuarioPassword
             })
         print(usuarioActualizado)
         base_de_datos.session.commit()
