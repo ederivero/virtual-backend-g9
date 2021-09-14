@@ -3,7 +3,8 @@ from flask_restful import Api
 from config.conexion_bd import base_de_datos
 from controllers.Tarea import TareasController
 from controllers.Usuario import (RegistroController,
-                                 UsuarioController)
+                                 UsuarioController,
+                                 ResetearPasswordController)
 from flask_jwt import JWT
 from config.seguridad import autenticador, identificador
 from dotenv import load_dotenv
@@ -73,6 +74,7 @@ api.add_resource(RegistroController, '/registro')
 # api.add_resource(LoginController, '/login')
 api.add_resource(UsuarioController, '/usuario')
 api.add_resource(TareasController, '/tareas')
+api.add_resource(ResetearPasswordController, '/reset-password')
 
 if __name__ == '__main__':
     app.run(debug=True)

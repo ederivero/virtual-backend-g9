@@ -5,6 +5,10 @@ from models.Usuario import UsuarioModel
 from config.conexion_bd import base_de_datos
 from flask_jwt import jwt_required, current_identity
 from sqlalchemy.exc import IntegrityError
+from cryptography.fernet import Fernet
+from os import environ
+from datetime import datetime, timedelta
+from json import dumps
 
 
 PATRON_CORREO = r'\w+[@]\w+[.]\w{2,3}'
@@ -236,4 +240,42 @@ class UsuarioController(Resource):
 
 
 class ResetearPasswordController(Resource):
-    pass
+    serializador = reqparse.RequestParser()
+    serializador.add_argument(
+        'correo',
+        type=str,
+        required=True,
+        location='json',
+        help='Falta el correo'
+    )
+
+    def post(self):
+        data = self.serializador.parse_args()
+        correo = data.get('correo')
+        if search(PATRON_CORREO, correo) is None:
+            return {
+                "message": "Formato de correo incorrecto"
+            }, 400
+        usuario = base_de_datos.session.query(UsuarioModel).filter(
+            UsuarioModel.usuarioCorreo == correo).first()
+        # if usuario is None:
+        if not usuario:
+            return {
+                "message": "Usuario no encontrado"
+            }, 404
+        print(environ.get('FERNET_SECRET'))
+        fernet = Fernet(environ.get('FERNET_SECRET'))
+        mensaje = {
+            "fecha_caducidad": str(datetime.utcnow()+timedelta(minutes=30)),
+            "correo": correo
+        }
+        mensaje_json = dumps(mensaje)
+        mensaje_encriptado = fernet.encrypt(
+            bytes(mensaje_json, 'utf-8')).decode('utf-8')
+        print(mensaje_encriptado)
+        # mensaje_desencriptado = fernet.decrypt(
+        #     bytes(mensaje_encriptado, 'utf-8'))
+        # print(mensaje_desencriptado)
+        return {
+            "message": "Se envio un correo con el cambio de password"
+        }
