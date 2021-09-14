@@ -4,6 +4,7 @@ from bcrypt import hashpw, gensalt, checkpw
 from models.Usuario import UsuarioModel
 from config.conexion_bd import base_de_datos
 from flask_jwt import jwt_required, current_identity
+from sqlalchemy.exc import IntegrityError
 
 
 PATRON_CORREO = r'\w+[@]\w+[.]\w{2,3}'
@@ -194,30 +195,45 @@ class UsuarioController(Resource):
         # TODO hacer que si el usuario envia la password entonces modificarla pero previamente usar bcrypt para encriptar la contraseña
         nuevaPwd = None
         if data.get('password') is not None:
+            if search(PATRON_PASSWORD, data.get('password')) is None:
+                return {
+                    "message": "La contraseña debe tener al menos 1 mayus, 1minus, 1 num y 1 caract"
+                }, 400
+
             print('hay password')
+
             pwdb = bytes(data.get('password'), 'utf-8')
             salt = gensalt(rounds=10)
             nuevaPwd = hashpw(pwdb, salt).decode('utf-8')
         print(nuevaPwd)
-        usuarioActualizado = base_de_datos.session.query(
-            UsuarioModel).update({
-                "usuarioNombre": data.get('nombre') if data.get(
-                    'nombre') is not None else usuarioEncontrado.usuarioNombre,
+        try:
+            usuarioActualizado = base_de_datos.session.query(
+                UsuarioModel).filter(UsuarioModel.usuarioId == usuarioEncontrado.usuarioId).update({
+                    "usuarioNombre": data.get('nombre') if data.get(
+                        'nombre') is not None else usuarioEncontrado.usuarioNombre,
 
-                "usuarioApellido": data.get('apellido') if data.get(
-                    'apellido') is not None else usuarioEncontrado.usuarioApellido,
+                    "usuarioApellido": data.get('apellido') if data.get(
+                        'apellido') is not None else usuarioEncontrado.usuarioApellido,
 
-                UsuarioModel.usuarioCorreo: data.get('correo') if data.get(
-                    'correo') is not None else usuarioEncontrado.usuarioCorreo,
+                    UsuarioModel.usuarioCorreo: data.get('correo') if data.get(
+                        'correo') is not None else usuarioEncontrado.usuarioCorreo,
 
-                UsuarioModel.usuarioTelefono: data.get('telefono') if data.get(
-                    'telefono') is not None else usuarioEncontrado.usuarioTelefono,
+                    UsuarioModel.usuarioTelefono: data.get('telefono') if data.get(
+                        'telefono') is not None else usuarioEncontrado.usuarioTelefono,
 
-                UsuarioModel.usuarioPassword: nuevaPwd if nuevaPwd is not None else usuarioEncontrado.usuarioPassword
-            })
-        print(usuarioActualizado)
-        base_de_datos.session.commit()
+                    UsuarioModel.usuarioPassword: nuevaPwd if nuevaPwd is not None else usuarioEncontrado.usuarioPassword
+                })
+            print('paso')
+            base_de_datos.session.commit()
 
-        return {
-            "message": "Usuario actualizado exitosamente"
-        }
+            return {
+                "message": "Usuario actualizado exitosamente"
+            }
+        except IntegrityError:
+            return {
+                "message": "Ya existe un usuario con ese correo, no se puede duplicar el correo"
+            }, 400
+
+
+class ResetearPasswordController(Resource):
+    pass
