@@ -9,6 +9,7 @@ from cryptography.fernet import Fernet
 from os import environ
 from datetime import datetime, timedelta
 from json import dumps
+from config.enviar_correo import enviarCorreo
 
 
 PATRON_CORREO = r'\w+[@]\w+[.]\w{2,3}'
@@ -276,6 +277,7 @@ class ResetearPasswordController(Resource):
         # mensaje_desencriptado = fernet.decrypt(
         #     bytes(mensaje_encriptado, 'utf-8'))
         # print(mensaje_desencriptado)
+        enviarCorreo(correo, 'Esto es una pruebaaaa')
         return {
             "message": "Se envio un correo con el cambio de password"
         }
