@@ -1,4 +1,4 @@
-from flask import Flask, current_app
+from flask import Flask, current_app, render_template, request
 from flask_restful import Api
 from config.conexion_bd import base_de_datos
 from controllers.Tarea import TareasController
@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from datetime import timedelta, datetime
 from os import environ
 from config.configuracion_jwt import manejo_error_JWT
+from cryptography.fernet import Fernet
+from json import loads
 
 load_dotenv()
 
@@ -67,6 +69,46 @@ def definir_payload(identity):
         "nbf": not_before_delta,
         "usuario": user,
     }
+
+
+@app.route('/prueba-jinja', methods=['GET'])
+def prueba_jinja():
+    productos = ['manzana', 'pera', 'higo', 'pollo']
+    personas = [{
+        "nombre": "Eduardo",
+        "sexo": "Masculino"
+    }, {
+        "nombre": "Renzo",
+        "sexo": "Masculino"
+    }, {
+        "nombre": "Giovana",
+        "sexo": "Femenino"
+    }, {
+        "nombre": "Henry",
+        "sexo": "Masculino"
+    }]
+    masculinos = []
+    femeninas = []
+    for persona in personas:
+        if persona['sexo'] == 'Masculino':
+            masculinos.append(persona)
+        elif persona['sexo'] == 'Femenino':
+            femeninas.append(persona)
+    return render_template('pruebas.jinja', nombre='Eduardo', saludo='Buenas noches', productos=productos, masculinos=masculinos, femeninas=femeninas)
+
+
+@app.route('/change-password', methods=['GET'])
+def cambiar_password():
+    # print(request.args)
+    # sacamos la token de los query params
+    token = request.args.get('token')
+    # creamos la instancia de Fernet
+    fernet = Fernet(environ.get('FERNET_SECRET'))
+    # desencriptamos la token
+    resultado = fernet.decrypt(bytes(token, 'utf-8')).decode('utf-8')
+    resultado = loads(resultado)
+    print(resultado)
+    return render_template('change_password.jinja')
 
 
 # RUTAS

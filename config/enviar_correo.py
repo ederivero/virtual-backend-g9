@@ -6,12 +6,10 @@ from os import environ
 from dotenv import load_dotenv
 load_dotenv()
 
-print(environ.get('EMAIL'))
 mensaje = MIMEMultipart()
 mensaje['From'] = environ.get('EMAIL')
 mensaje['Subject'] = 'Solicitud de restauracion de la contraseña'
 password = environ.get('EMAIL_PASSWORD')
-print(password)
 
 
 def enviarCorreo(destinatario, cuerpo):
@@ -19,7 +17,7 @@ def enviarCorreo(destinatario, cuerpo):
     mensaje['To'] = destinatario
     texto = cuerpo
     # Luego de definir el cuerpo del correo agregamos al mensaje mediante su metodo attach y en formato MIMEText en el cual recibira un texto y luego el format a convertir, si quieres enviar un html entonces pondremos en 'html', si queremos enviar un texto 'plain
-    mensaje.attach(MIMEText(texto, 'plain'))
+    mensaje.attach(MIMEText(texto, 'html'))
     try:
         # configurar el servidor SMTP
         servidorSMTP = smtplib.SMTP('smtp.gmail.com', 587)
