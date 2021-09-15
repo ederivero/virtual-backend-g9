@@ -266,7 +266,7 @@ class ResetearPasswordController(Resource):
             }, 404
         fernet = Fernet(environ.get('FERNET_SECRET'))
         mensaje = {
-            "fecha_caducidad": str(datetime.utcnow()+timedelta(minutes=30)),
+            "fecha_caducidad": str(datetime.utcnow()+timedelta(hours=1)),
             "correo": correo
         }
         mensaje_json = dumps(mensaje)

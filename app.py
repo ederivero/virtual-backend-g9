@@ -97,18 +97,38 @@ def prueba_jinja():
     return render_template('pruebas.jinja', nombre='Eduardo', saludo='Buenas noches', productos=productos, masculinos=masculinos, femeninas=femeninas)
 
 
-@app.route('/change-password', methods=['GET'])
+@app.route('/change-password', methods=['GET', 'POST'])
 def cambiar_password():
-    # print(request.args)
-    # sacamos la token de los query params
-    token = request.args.get('token')
-    # creamos la instancia de Fernet
-    fernet = Fernet(environ.get('FERNET_SECRET'))
-    # desencriptamos la token
-    resultado = fernet.decrypt(bytes(token, 'utf-8')).decode('utf-8')
-    resultado = loads(resultado)
-    print(resultado)
-    return render_template('change_password.jinja')
+    if request.method == 'GET':
+        # print(request.args)
+        # sacamos la token de los query params
+        token = request.args.get('token')
+        # creamos la instancia de Fernet
+        fernet = Fernet(environ.get('FERNET_SECRET'))
+        # desencriptamos la token
+        try:
+            resultado = fernet.decrypt(bytes(token, 'utf-8')).decode('utf-8')
+            resultado = loads(resultado)
+            fecha_caducidad = datetime.strptime(resultado.get(
+                'fecha_caducidad'), '%Y-%m-%d %H:%M:%S.%f')
+            print(fecha_caducidad)
+            print(datetime.utcnow())
+            fecha_actual = datetime.utcnow()
+            if fecha_actual < fecha_caducidad:
+                print('todavia hay tiempo')
+                return render_template('change_password.jinja')
+            else:
+                print('ya no hay tiempo')
+                raise Exception('ya no hay tiempo')
+                # return render_template('bad_token.jinja')
+
+        except Exception as e:
+            print(e)
+            return render_template('bad_token.jinja')
+    elif request.method == 'POST':
+        return {
+            "message": "Se cambio la contraseña exitosamente"
+        }
 
 
 # RUTAS
