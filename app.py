@@ -116,7 +116,7 @@ def cambiar_password():
             fecha_actual = datetime.utcnow()
             if fecha_actual < fecha_caducidad:
                 print('todavia hay tiempo')
-                return render_template('change_password.jinja')
+                return render_template('change_password.jinja', correo=resultado['correo'])
             else:
                 print('ya no hay tiempo')
                 raise Exception('ya no hay tiempo')
@@ -126,6 +126,7 @@ def cambiar_password():
             print(e)
             return render_template('bad_token.jinja')
     elif request.method == 'POST':
+        print(request.get_json())
         return {
             "message": "Se cambio la contraseña exitosamente"
         }

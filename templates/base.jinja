@@ -11,7 +11,7 @@
       crossorigin="anonymous"
     />
 
-    <title>Pagina de inicio</title>
+    <title>{% block titulo %}{% endblock %} | Tareas Flask</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -74,7 +74,6 @@
         </div>
       </div>
     </nav>
-
     <div style="border: 1px solid red">
       {% block informacion %}{% endblock %}
     </div>

@@ -10,9 +10,12 @@ btnEnviar.onclick = async (e) => {
 
   const respuesta = await fetch("/change-password", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       email: "",
-      password: pwd1,
+      password: pwd1.value,
     }),
   });
 
