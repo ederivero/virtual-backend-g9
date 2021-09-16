@@ -1,3 +1,9 @@
 entorno_flask/
 __pycache__/
 .env
+
+# ignora todos los elementos (archivos y sub carpetas) de la carpeta media
+media/*
+# Pero haz una excepcion en el archivo :
+# si queremos exceptuar un archivo deberemos entonces usar el * para indicar previamente que los sub archivos no sean considerados mas no toda la carpeta
+!media/not_found.png

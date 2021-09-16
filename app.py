@@ -1,4 +1,4 @@
-from flask import Flask, current_app, render_template, request
+from flask import Flask, current_app, render_template, request, send_file
 from flask_restful import Api
 from config.conexion_bd import base_de_datos
 from controllers.Tarea import TareasController
@@ -17,6 +17,7 @@ from models.Usuario import UsuarioModel
 from bcrypt import gensalt, hashpw
 from utils.patrones import PATRON_PASSWORD
 from re import search
+from uuid import uuid4
 
 load_dotenv()
 
@@ -175,14 +176,36 @@ def cambiar_password():
 @app.route('/subir-archivo-servidor', methods=['POST'])
 def subir_archivo_servidor():
     archivo = request.files.get('imagen')
+    if archivo is None:
+        return {
+            "message": "Archivo no encontrado"
+        }, 404
     # filename => retornara el nombre del archivo
     print(archivo.filename)
     # mimetype => retornara el formato (tipo) del archivo
     print(archivo.mimetype)
-    archivo.save(path.join('media', archivo.filename))
+    # sacar el nombre del archivo
+    nombre_inicial = archivo.filename
+    # sacado su extension
+    extension = nombre_inicial.rsplit(".")[-1]
+    # genero un nuevo nombre del archivo
+    nuevo_nombre = str(uuid4())+'.'+extension
+    # uso ese nombre para guardar el archivo
+    archivo.save(path.join('media', nuevo_nombre))
     return {
-        "message": "archivo subido exitosamente"
+        "message": "archivo subido exitosamente",
+        "content": {
+            "nombre": nuevo_nombre
+        }
     }, 201
+
+
+@app.route("/multimedia/<string:nombre>", methods=['GET'])
+def devolver_imagen_servidor(nombre):
+    try:
+        return send_file(path.join('media', nombre))
+    except:
+        return send_file(path.join('media', 'not_found.png'))
 
 
 # RUTAS
