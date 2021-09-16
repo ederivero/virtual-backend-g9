@@ -13,6 +13,10 @@ from os import environ
 from config.configuracion_jwt import manejo_error_JWT
 from cryptography.fernet import Fernet
 from json import loads
+from models.Usuario import UsuarioModel
+from bcrypt import gensalt, hashpw
+from utils.patrones import PATRON_PASSWORD
+from re import search
 
 load_dotenv()
 
@@ -127,9 +131,43 @@ def cambiar_password():
             return render_template('bad_token.jinja')
     elif request.method == 'POST':
         print(request.get_json())
-        return {
-            "message": "Se cambio la contraseña exitosamente"
-        }
+        # buscaria al usuario segun su correo
+        email = request.get_json().get('email')
+        password = request.get_json().get('password')
+
+        usuario = base_de_datos.session.query(UsuarioModel).filter(
+            UsuarioModel.usuarioCorreo == email).first()
+
+        if usuario is None:
+            return {
+                "message": "Usuario no existe"
+            }, 400
+
+        # validamos el formato de la contraseña
+        if search(PATRON_PASSWORD, password) is None:
+            return {
+                "message": "Contraseña muy debil, debe tener al menos 1 mayus, 1 minus, 1 numero, 1 carac. especial y no menos de 6 caracteres"
+            }, 400
+
+        # encripto la nueva contraseña
+        password_bytes = bytes(password, 'utf-8')
+        nuevaPwd = hashpw(password_bytes, gensalt()).decode('utf-8')
+
+        # llamo al model para hacer el update
+        try:
+            base_de_datos.session.query(UsuarioModel).filter(
+                UsuarioModel.usuarioId == usuario.usuarioId).update({'usuarioPassword': nuevaPwd})
+
+            base_de_datos.session.commit()
+            return {
+                "message": "Se cambio la contraseña exitosamente"
+            }
+
+        except Exception as e:
+            print(e)
+            return {
+                "message": "Hubo un error al actualizar el usuario"
+            }, 400
 
 
 # RUTAS
