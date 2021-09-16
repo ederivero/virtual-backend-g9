@@ -9,7 +9,7 @@ from flask_jwt import JWT
 from config.seguridad import autenticador, identificador
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
-from os import environ
+from os import environ, path
 from config.configuracion_jwt import manejo_error_JWT
 from cryptography.fernet import Fernet
 from json import loads
@@ -44,6 +44,8 @@ jsonwebtoken = JWT(app=app, authentication_handler=autenticador,
 jsonwebtoken.jwt_error_callback = manejo_error_JWT
 
 base_de_datos.init_app(app)
+
+base_de_datos.drop_all(app=app)
 base_de_datos.create_all(app=app)
 
 
@@ -168,6 +170,19 @@ def cambiar_password():
             return {
                 "message": "Hubo un error al actualizar el usuario"
             }, 400
+
+
+@app.route('/subir-archivo-servidor', methods=['POST'])
+def subir_archivo_servidor():
+    archivo = request.files.get('imagen')
+    # filename => retornara el nombre del archivo
+    print(archivo.filename)
+    # mimetype => retornara el formato (tipo) del archivo
+    print(archivo.mimetype)
+    archivo.save(path.join('media', archivo.filename))
+    return {
+        "message": "archivo subido exitosamente"
+    }, 201
 
 
 # RUTAS
