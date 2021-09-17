@@ -18,11 +18,19 @@ from bcrypt import gensalt, hashpw
 from utils.patrones import PATRON_PASSWORD
 from re import search
 from uuid import uuid4
+from cloudinary import config
+from cloudinary.uploader import upload, destroy
 
 load_dotenv()
 
 app = Flask(__name__)
 api = Api(app)
+
+config(
+    cloud_name=environ.get('CLOUD_NAME'),
+    api_key=environ.get('API_KEY'),
+    api_secret=environ.get('API_SECRET')
+)
 
 # config => las variables de configuracion de mi proyecto de flask DEBUG=TRUE, PORT= 5000, ENVIRONMENT=DEVELOPMENT
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URI')
@@ -46,7 +54,7 @@ jsonwebtoken.jwt_error_callback = manejo_error_JWT
 
 base_de_datos.init_app(app)
 
-base_de_datos.drop_all(app=app)
+# base_de_datos.drop_all(app=app)
 base_de_datos.create_all(app=app)
 
 
@@ -217,6 +225,26 @@ def eliminar_imagen_servidor(nombre):
         return {
             "message": 'ok'
         }, 204
+
+
+@app.route('/subir-imagen-cloudinary', methods=['POST'])
+def subir_imagen_cd():
+    imagen = request.files.get('imagen')
+    print(imagen)
+    resultado = upload(imagen, resource_type="video")
+    return {
+        "message": "Archivo subido exitosamente",
+        "content": resultado
+    }
+
+
+@app.route('/eliminar-imagen-cloudinary/<string:id>', methods=['DELETE'])
+def eliminar_imagen_cd(id):
+    respuesta = destroy(id)
+    return {
+        "message": "Imagen eliminada exitosamente",
+        "content": respuesta
+    }
 
 
 # RUTAS

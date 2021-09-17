@@ -2,6 +2,7 @@ from config.conexion_bd import base_de_datos
 from models.Tarea import TareaModel
 from flask_restful import Resource, reqparse
 from flask_jwt import current_identity, jwt_required
+from cloudinary import CloudinaryImage, CloudinaryVideo
 
 
 class TareasController(Resource):
@@ -80,8 +81,20 @@ class TareasController(Resource):
             tareaDict['tareaFechaCreacion'] = str(
                 tareaDict['tareaFechaCreacion'])
 
-            tareaDict['tareaEstado'] = tareaDict['tareaEstado'].value
+            # respuestaCD = CloudinaryImage(tarea.tareaImagen).video(transformation=[
+            #     {'background': "#ce6767", 'border': "17px_solid_rgb:000", 'height': 310,
+            #         'quality': 46, 'radius': 14, 'width': 634, 'zoom': "1.8", 'crop': "scale"},
+            #     {'angle': 185}
+            # ])
 
+            respuestaCD = CloudinaryVideo(tarea.tareaImagen).video(controls=True, transformation=[
+                {"width": 3.4, "angle": 20}
+            ], audio_frequency="96000")
+            # cuando en vez de solamente usar la instancia de la clase, llamamos a su metodo image entonces ya no retornara una instancia sino que retornara una etiqueta img con sus propiedad src para que pueda ser renderizada en el frontend, caso contrario si solamente usamos la clase CloudinaryImage esa nos retornara un metodo llamado url que sera la url de la imagen sin modificaciones
+            print(respuestaCD)
+
+            tareaDict['tareaEstado'] = tareaDict['tareaEstado'].value
+            tareaDict['tareaImagen'] = respuestaCD
             resultado.append(tareaDict)
         # devolver todas las tareas correspondiente al usuario del current_identity
         return{
