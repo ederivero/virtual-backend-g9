@@ -276,10 +276,78 @@ class ResetearPasswordController(Resource):
         link = request.host_url+"change-password?token={}".format(
             mensaje_encriptado)
 
-        enviarCorreo(correo, """Hola, {}
-        Has solicitado el reinicio de tu contraseña, haz click en el siguiente enlace para efectuarla:
-            <br>
-            <a href="{}" ><button style="background-color:peru; color:white; border:none; ">Cambiar</button></a>
+        enviarCorreo(correo, """
+            <!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        background: #f9f9f9;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          justify-content: center;
+          width: 50%;
+          flex-direction: column;
+          justify-content: flex-end;
+          background-color: white;
+          padding: 10px 50px;
+        "
+      >
+        <div style="justify-content: center; display: flex">
+          <img
+            width="138"
+            src="https://ci3.googleusercontent.com/proxy/xbGGyYfNO7rOwB3cJ8GvQ_6GUpaWXoqPKpUmrMJDjD2gVRFyUARcwh0qhbWv92i3qb1zJj3c9PYNULP_B3wHWJY--pjeXQiAyt6s5ETJieJ41Gy3loYi3AINdO8gJTk=s0-d-e1-ft#https://cdn.discordapp.com/email_assets/592423b8aedd155170617c9ae736e6e7.png%22/%3E"
+          />
+        </div>
+        <div>
+          <div style="margin-top: 70px">
+            <div>
+              <h2 style="color: #585555; font-weight: 500">Hola, {}</h2>
+            </div>
+            <div>
+              <p style="color: #919191">
+                Haz clic en el siguiente botón para restablecer tu contraseña de
+                Discord. Si no has solicitado una nueva contraseña, ignora este
+                correo.
+              </p>
+            </div>
+            <div style="margin-top: 70px; margin-bottom: 70px">
+              <a
+                href="{}"
+                style="
+                  text-decoration: none;
+                  background-color: #5865f2;
+                  padding: 9px;
+                  color: white;
+                  margin-left: 300px;
+                "
+                >Restablecer contraseña</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+
         """.format(usuario.usuarioNombre, link))
 
         return {

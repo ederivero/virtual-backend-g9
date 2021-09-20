@@ -231,10 +231,10 @@ def eliminar_imagen_servidor(nombre):
 def subir_imagen_cd():
     imagen = request.files.get('imagen')
     print(imagen)
-    resultado = upload(imagen, resource_type="video")
+    resultado = upload(imagen, resource_type="image")
     return {
         "message": "Archivo subido exitosamente",
-        "content": resultado
+        "content": resultado.get('public_id')
     }
 
 
