@@ -1,0 +1,9 @@
+django-admin startproject <nombre_proyecto> => inicializar un nuevo proyecto en django
+
+python manage.py runserver => levanta el proyecto de django
+
+python manage.py showmigrations => muestra todas las migraciones y las que no se ejecutaron en la bd no estaran seleccionadas
+
+python manage.py migrate => ejecutara todas las migraciones pendientes en la bd
+
+NOTA: para cualquier comando se puede añadir al final el sub-comando --help para ver las opciones de ese comando
