@@ -6,7 +6,7 @@ from django.db import models
 class ProductoModel(models.Model):
 
     class OpcionesUM(models.TextChoices):
-        UNIDADES = 'UN', 'UNIDADES'
+        UNIDAD = 'UN', 'UNIDAD'
         DOCENA = 'DOC', 'DOCENA'
         CIENTO = 'CI', 'CIENTO'
         MILLAR = 'MI', 'MILLAR'
@@ -24,7 +24,10 @@ class ProductoModel(models.Model):
         max_digits=5, decimal_places=2, db_column='precio')
 
     productoUnidadMedida = models.TextField(
-        choices=OpcionesUM.choices, default=OpcionesUM.UNIDADES, db_column='unidad_medida')
+        choices=OpcionesUM.choices, default=OpcionesUM.UNIDAD, db_column='unidad_medida')
+
+    def __str__(self):
+        return self.productoNombre
 
     class Meta:
         """Link de la documentacion https://docs.djangoproject.com/en/3.2/ref/models/options/"""
@@ -39,15 +42,22 @@ class ProductoModel(models.Model):
 
 
 class ClienteModel(models.Model):
+    # NOTA: si vamos a usar el panel administrativo de Django entonces solo ahi se debe usar el verbose_name y el help_text
     clienteId = models.AutoField(
         db_column='id', primary_key=True, unique=True, null=False)
 
-    clienteNombre = models.CharField(max_length=45, db_column='nombre')
+    clienteNombre = models.CharField(
+        max_length=45, db_column='nombre', verbose_name='nombre', help_text='Ingresa aqui el nombre')
 
     clienteDocumento = models.CharField(
-        max_length=12, db_column='documento', unique=True)
+        max_length=12, db_column='documento', unique=True, verbose_name='documento del cliente')
 
-    clienteDireccion = models.CharField(max_length=100, db_column='direccion')
+    clienteDireccion = models.CharField(
+        max_length=100, db_column='direccion', verbose_name='direccion')
+
+    def __str__(self):
+        # Metodo que permite sobreescribir la forma en la cual se mostrara el objeto por consola al ser consultado en su totalidad
+        return self.clienteNombre
 
     class Meta:
         db_table = 'clientes'
@@ -102,6 +112,6 @@ class DetalleModel(models.Model):
                                   on_delete=models.PROTECT, related_name='cabeceraDetalles', null=False)
 
     class Meta:
-        db_table='detalle_operaciones'
-        verbose_name='detalle'
-        verbose_name_plural='detalles'
+        db_table = 'detalle_operaciones'
+        verbose_name = 'detalle'
+        verbose_name_plural = 'detalles'
