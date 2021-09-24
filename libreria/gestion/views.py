@@ -22,7 +22,7 @@ class ProductosController(ListCreateAPIView):
     serializer_class = ProductoSerializer
 
     def get(self, request):
-        respuesta = self.get_queryset()
+        respuesta = self.get_queryset().filter(productoEstado=True).all()
         print(respuesta)
         # instance => para cuando ya tenemos informacion en la bd y la queremos serializar para mostrarsela al cliente
         # data => para ver si la informacion que me esta enviando el cliente esta buena o no
@@ -106,5 +106,24 @@ class ProductoController(APIView):
                 "content": serializador.errors
             }, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
-        pass
+    def delete(self, request, id):
+
+        productoEncontrado: ProductoModel = ProductoModel.objects.filter(
+            productoId=id).first()
+
+        if productoEncontrado is None:
+            return Response(data={
+                "message": "Producto no encontrado",
+                "content": None
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        # modificar su estado a False
+        productoEncontrado.productoEstado = False
+        productoEncontrado.save()
+
+        serializador = ProductoSerializer(instance=productoEncontrado)
+
+        return Response(data={
+            "message": "Producto eliminado exitosamente",
+            "content": serializador.data
+        })
