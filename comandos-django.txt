@@ -16,3 +16,7 @@ python manage.py makemigrations <nombre_app> --name <nombre_migracion> => creara
 python manage.py sqlmigrate <nombre_app> <nombre_migracion> => nos dara el comando sql de la determinada migracion
 
 python manage.py createsuperuser => crea un super usuario para acceder al panel administrativo
+
+python manage.py dbshell => usara las credenciales de nuestro proyecto para conectarnos a la bd del proyecto
+
+python manage.py shell => inicializa un playground de python para poder usar todas las librerias y archivos del proyecto
