@@ -20,3 +20,5 @@ python manage.py createsuperuser => crea un super usuario para acceder al panel 
 python manage.py dbshell => usara las credenciales de nuestro proyecto para conectarnos a la bd del proyecto
 
 python manage.py shell => inicializa un playground de python para poder usar todas las librerias y archivos del proyecto
+
+python manage.py test => correra todos los archivos test.py que tengamos en el proyecto, adicional a ello si queremos ver un mayor grado de detalle de los test podemos usar el flag verbosity y con valores del 0 al 3 siendo 0 el menor detalle y 3 el maximo detalle
