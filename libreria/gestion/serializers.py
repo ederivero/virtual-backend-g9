@@ -19,6 +19,12 @@ class ProductoSerializer(serializers.ModelSerializer):
 
 
 class ClienteSerializer(serializers.ModelSerializer):
+    # https://www.django-rest-framework.org/api-guide/fields/
+    clienteNombre = serializers.CharField(
+        max_length=45, required=False, trim_whitespace=True, read_only=True)
+    clienteDireccion = serializers.CharField(
+        max_length=100, required=False, trim_whitespace=True)
+
     class Meta:
         model = ClienteModel
         fields = '__all__'
