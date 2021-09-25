@@ -209,7 +209,7 @@ class BuscadorClienteController(RetrieveAPIView):
     def get(self, request: Request):
         print(request.query_params)
         # primero validar si me esta pasando el nombre o el documento
-        # nombre = '...'
+        nombre = request.query_params.get('nombre')
         documento = request.query_params.get('documento')
 
         # si tengo documento hare una busqueda todos los clientes por ese documento
@@ -225,5 +225,21 @@ class BuscadorClienteController(RetrieveAPIView):
             data = self.serializer_class(instance=clienteEncontrado)
 
             return Response({'content': data.data})
+
+        if nombre:
+            # from django.db.models.functions import Upper
+            # resultado = ClienteModel.objects.annotate(
+            #     clienteNombre_upper=Upper('eduardo')).all()
+            # print(resultado)
+            # https://docs.djangoproject.com/en/3.2/ref/models/querysets/#field-lookups
+            clientes = ClienteModel.objects.filter(
+                clienteNombre__icontains=nombre).all()
+            data = self.serializer_class(instance=clientes, many=True)
+
+        # TODO: 1. agregar los test para el cliente controler y su busqueda, 2. dar la opcion que se puedan enviar el documento y nombre a la vez y que se haga el filtro de ambos si es que provee
+
+            return Response(data={
+                'content': data.data
+            })
 
         return Response({'message': None})
