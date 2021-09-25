@@ -47,7 +47,20 @@ class ProductosTestCase(APITestCase):
     def test_get_success(self):
         '''Deberia retornar los productos almacenados'''
         # yo le pase parametros de paginacion x la url
-        productoEncontrado = ProductoModel.objects.all()
-        print(productoEncontrado)
+        # productoEncontrado = ProductoModel.objects.all()
+        request = self.client.get(
+            '/gestion/productos/', data={'pagina': 1, 'cantidad': 2})
 
-        self.assertEqual(1, 1)
+        # pagina = 1 && cantidad = 2
+        # testen que en la paginacion se cumpla lo sgte:
+        paginacion = request.data.get('paginacion')
+        content = request.data.get('data').get('content')
+
+        # paginaPrevia => null
+        self.assertIsNone(paginacion.get('paginaPrevia'))
+        # paginaContinua != null
+        self.assertIsNotNone(paginacion.get('paginaContinua'))
+        # porPagina = 2
+        self.assertEqual(paginacion.get('porPagina'), 2)
+        # data.content => Lista cuya longitud sea 2
+        self.assertEqual(len(content), 2)

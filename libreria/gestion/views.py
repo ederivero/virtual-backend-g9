@@ -2,10 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .models import ProductoModel
-from .serializers import ProductoSerializer
+from .models import ProductoModel, ClienteModel
+from .serializers import ProductoSerializer, ClienteSerializer
 from rest_framework import status
 from .utils import PaginacionPersonalizada
+from rest_framework.serializers import Serializer
 
 
 class PruebaController(APIView):
@@ -128,3 +129,24 @@ class ProductoController(APIView):
             "message": "Producto eliminado exitosamente",
             "content": serializador.data
         })
+
+
+class ClienteController(ListCreateAPIView):
+    queryset = ClienteModel.objects.all()
+    serializer_class = ClienteSerializer
+
+    def get(self, request):
+        pass
+
+    def post(self, request: Request):
+
+        data: Serializer = self.get_serializer(data=request.data)
+        if data.is_valid():
+            return Response(data={
+                'message': 'Cliente agregado exitosamente'
+            })
+        else:
+            return Response(data={
+                'message': 'Error al ingresar el cliente',
+                'content': data.errors
+            })
