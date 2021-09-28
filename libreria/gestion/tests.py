@@ -1,5 +1,5 @@
 from rest_framework.test import APITestCase
-from .models import ProductoModel
+from .models import ClienteModel, ProductoModel
 
 
 class ProductosTestCase(APITestCase):
@@ -64,3 +64,42 @@ class ProductosTestCase(APITestCase):
         self.assertEqual(paginacion.get('porPagina'), 2)
         # data.content => Lista cuya longitud sea 2
         self.assertEqual(len(content), 2)
+
+
+class ClientesTestCase(APITestCase):
+    def setUp(self):
+        ClienteModel(clienteNombre='DE RIVERO MANRIQUE, EDUARDO RAMIRO',
+                     clienteDocumento='73500746', clienteDireccion='CALLE LOS TULIPANES 414').save
+
+    def test_post_cliente_fail(self):
+        '''Deberia arrojar un error si los datos no son proveidos'''
+        request = self.client.post('/gestion/clientes/')
+        self.assertEqual(request.status_code, 400)
+
+    def test_post_cliente_success(self):
+        '''Deberia crear el cliente y devolverlo'''
+        nuevoCliente = {
+            "clienteDocumento": "73500746",
+            "clienteDireccion": "Las malvinas 414"
+        }
+
+        request = self.client.post(
+            '/gestion/clientes/', data=nuevoCliente, format='json')
+
+        self.assertEqual(request.data.get('content').get('clienteDocumento'),
+                         nuevoCliente.get('clienteDocumento'))
+
+    def test_post_client_exists_fail(self):
+        '''Deberia arrojar un error si el cliente ya existe'''
+        nuevoCliente = {
+            "clienteDocumento": "73500746",
+            "clienteDireccion": "Las malvinas 414"
+        }
+
+        self.client.post(
+            '/gestion/clientes/', data=nuevoCliente, format='json')
+
+        request = self.client.post(
+            '/gestion/clientes/', data=nuevoCliente, format='json')
+
+        self.assertEqual(request.status_code, 400)

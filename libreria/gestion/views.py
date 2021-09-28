@@ -1,14 +1,17 @@
+from django.db.models.query import QuerySet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
-from .models import ProductoModel, ClienteModel
-from .serializers import ProductoSerializer, ClienteSerializer
+from .models import CabeceraModel, ProductoModel, ClienteModel
+from .serializers import ProductoSerializer, ClienteSerializer, OperacionSerializer
 from rest_framework import status
 from .utils import PaginacionPersonalizada
 from rest_framework.serializers import Serializer
 import requests as solicitudes
 from os import environ
+from django.db import transaction, Error
+from datetime import datetime
 
 
 class PruebaController(APIView):
@@ -195,36 +198,32 @@ class ClienteController(CreateAPIView):
             return Response(data={
                 'message': 'Cliente agregado exitosamente',
                 'content': nuevoClienteSerializado.data
-            })
+            }, status=status.HTTP_201_CREATED)
         else:
             return Response(data={
                 'message': 'Error al ingresar el cliente',
                 'content': data.errors
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BuscadorClienteController(RetrieveAPIView):
     serializer_class = ClienteSerializer
 
     def get(self, request: Request):
-        print(request.query_params)
+        # print(request.query_params)
         # primero validar si me esta pasando el nombre o el documento
         nombre = request.query_params.get('nombre')
         documento = request.query_params.get('documento')
 
         # si tengo documento hare una busqueda todos los clientes por ese documento
+        clienteEncontrado = None
         if documento:
-            clienteEncontrado = ClienteModel.objects.filter(
-                clienteDocumento=documento).first()
-            # si no existe el cliente retornar un resultado
-            if clienteEncontrado is None:
-                return Response({
-                    'message': 'Cliente no existe'
-                }, status=status.HTTP_404_NOT_FOUND)
+            clienteEncontrado: QuerySet = ClienteModel.objects.filter(
+                clienteDocumento=documento)
 
-            data = self.serializer_class(instance=clienteEncontrado)
+            # data = self.serializer_class(instance=clienteEncontrado, many=True)
 
-            return Response({'content': data.data})
+            # return Response({'content': data.data})
 
         if nombre:
             # from django.db.models.functions import Upper
@@ -232,14 +231,60 @@ class BuscadorClienteController(RetrieveAPIView):
             #     clienteNombre_upper=Upper('eduardo')).all()
             # print(resultado)
             # https://docs.djangoproject.com/en/3.2/ref/models/querysets/#field-lookups
-            clientes = ClienteModel.objects.filter(
-                clienteNombre__icontains=nombre).all()
-            data = self.serializer_class(instance=clientes, many=True)
+            if clienteEncontrado is not None:
+                clienteEncontrado = clienteEncontrado.filter(
+                    clienteNombre__icontains=nombre).all()
+            else:
+                clienteEncontrado = ClienteModel.objects.filter(
+                    clienteNombre__icontains=nombre).all()
 
         # TODO: 1. agregar los test para el cliente controler y su busqueda, 2. dar la opcion que se puedan enviar el documento y nombre a la vez y que se haga el filtro de ambos si es que provee
 
-            return Response(data={
-                'content': data.data
-            })
+        data = self.serializer_class(instance=clienteEncontrado, many=True)
+        return Response(data={
+            'message': 'Los usuarios son:',
+            'content': data.data
+        })
 
-        return Response({'message': None})
+
+class OperacionController(CreateAPIView):
+    serializer_class = OperacionSerializer
+
+    def post(self, request: Request):
+        data = self.serializer_class(data=request.data)
+        if data.is_valid():
+            # si el cliente existe o no existe por su DOCUMENTO
+            documento = data.validated_data.get('cliente')
+            clienteEncontrado: ClienteModel = ClienteModel.objects.filter(
+                clienteDocumento=documento).first()
+            print(clienteEncontrado)
+            detalle = data.validated_data.get('detalle')
+            tipo = data.validated_data.get('tipo')
+
+            try:
+                with transaction.atomic():
+                    if clienteEncontrado is None:
+                        raise Exception('Usuario no existe')
+
+                    nuevaCabecera = CabeceraModel(
+                        cabeceraTipo=tipo, clientes=clienteEncontrado.clienteId).save()
+            except Error as e:
+                print(e)
+                return Response(data={
+                    'message': 'Error al crear la operacion',
+                    'content': e.args
+                })
+            except Exception as exc:
+                return Response(data={
+                    'message': 'Error al crear la operacion',
+                    'content': exc.args
+                })
+
+            return Response(data={
+                'message': 'Operacion registrada exitosamente'
+            })
+        else:
+            return Response(data={
+                'message': 'Error al crear la operacion',
+                'content': data.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
