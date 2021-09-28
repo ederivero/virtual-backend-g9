@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProductoModel, ClienteModel
+from .models import DetalleModel, ProductoModel, ClienteModel, CabeceraModel
 
 
 class ProductoSerializer(serializers.ModelSerializer):
@@ -48,3 +48,23 @@ class OperacionSerializer(serializers.Serializer):
     detalle = DetalleOperacionSerializer(many=True)
 
     # detalle2= serializers.ListField(child=DetalleOperacionSerializer)
+
+
+class DetalleOperacionModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetalleModel
+        # fields = '__all__'
+        exclude = ['cabeceras']
+        depth = 1
+
+
+class OperacionModelSerializer(serializers.ModelSerializer):
+    cabeceraDetalles = DetalleOperacionModelSerializer(
+        # source='cabeceraDetalles',
+        many=True)
+
+    class Meta:
+        model = CabeceraModel
+        fields = '__all__'
+        # con el atributo depth indicare cuantos niveles quiero agregar para mostrar la informacion en el caso de las FK's
+        depth = 1

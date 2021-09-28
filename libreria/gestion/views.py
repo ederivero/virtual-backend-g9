@@ -3,8 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
-from .models import CabeceraModel, ProductoModel, ClienteModel
-from .serializers import ProductoSerializer, ClienteSerializer, OperacionSerializer
+from .models import CabeceraModel, DetalleModel, ProductoModel, ClienteModel
+from .serializers import (ProductoSerializer,
+                          ClienteSerializer,
+                          OperacionSerializer,
+                          OperacionModelSerializer)
 from rest_framework import status
 from .utils import PaginacionPersonalizada
 from rest_framework.serializers import Serializer
@@ -12,6 +15,7 @@ import requests as solicitudes
 from os import environ
 from django.db import transaction, Error
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 
 class PruebaController(APIView):
@@ -257,8 +261,8 @@ class OperacionController(CreateAPIView):
             documento = data.validated_data.get('cliente')
             clienteEncontrado: ClienteModel = ClienteModel.objects.filter(
                 clienteDocumento=documento).first()
-            print(clienteEncontrado)
-            detalle = data.validated_data.get('detalle')
+
+            detalles = data.validated_data.get('detalle')
             tipo = data.validated_data.get('tipo')
 
             try:
@@ -267,7 +271,19 @@ class OperacionController(CreateAPIView):
                         raise Exception('Usuario no existe')
 
                     nuevaCabecera = CabeceraModel(
-                        cabeceraTipo=tipo, clientes=clienteEncontrado.clienteId).save()
+                        cabeceraTipo=tipo, clientes=clienteEncontrado)
+
+                    nuevaCabecera.save()
+                    for detalle in detalles:
+                        producto = ProductoModel.objects.get(
+                            productoId=detalle.get('producto'))
+
+                        DetalleModel(
+                            detalleCantidad=detalle.get('cantidad'), detalleImporte=producto.productoPrecio *
+                            detalle.get('cantidad'),
+                            productos=producto,
+                            cabeceras=nuevaCabecera).save()
+
             except Error as e:
                 print(e)
                 return Response(data={
@@ -288,3 +304,17 @@ class OperacionController(CreateAPIView):
                 'message': 'Error al crear la operacion',
                 'content': data.errors
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OperacionesController(RetrieveAPIView):
+    serializer_class = OperacionModelSerializer
+
+    def get(self, request: Request, id):
+        cabecera = get_object_or_404(CabeceraModel, pk=id)
+        # cabecera = CabeceraModel.objects.get(cabeceraId=id)
+        print(cabecera)
+        cabecera_serializada = self.serializer_class(instance=cabecera)
+        return Response(data={
+            'message': 'La operacion es:',
+            'content': cabecera_serializada.data
+        })
