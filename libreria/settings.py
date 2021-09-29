@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+
 from pathlib import Path
 from os import environ
 from dotenv import load_dotenv
@@ -152,3 +153,6 @@ CORS_ALLOW_METHODS = ['GET', 'POST']
 
 # LOS HEADERS QUE PUEDEN ENVIAR A MI API
 CORS_ALLOW_HEADERS = ['Content-Type', 'origin', 'Authorization', "accept", ]
+
+# ES DONDE SE ALMACENARAN TODOS LOS ARCHIVOS STATICOS DE LA APLICACION (css, js, html) de las librerias que usan dichos recursos DRF, SWAGGER, ADMIN SITE
+STATIC_ROOT = BASE_DIR / 'staticfiles'
