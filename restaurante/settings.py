@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cms',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# cuando se sobreescribe o se modifica el comportamiento original del modelo auth
+AUTH_USER_MODEL = 'cms.UsuarioModel'

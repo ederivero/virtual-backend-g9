@@ -22,11 +22,12 @@ class ManejoUsuarios(BaseUserManager):
 
         return usuarioCreado
 
-    def create_superuser(self, email, nombre, apellido, tipo, password):
+    def create_superuser(self, usuarioCorreo, usuarioNombre, usuarioApellido, usuarioTipo, password):
         '''Creacion de un super usuario (administrador)'''
+        # los parametros que va a recibir tienen que ser los mismos que hubiesemos declarado en el usuarioModel REQUIRED_FIELD y en el USERNAME_FIELD , llegaran con esos mismo nombre de parametros y en el caso que se escribiese mal, lanzara un error de argumento inesperado
 
         nuevoUsuario = self.create_user(
-            email, nombre, apellido, tipo, password)
+            usuarioCorreo, usuarioNombre, usuarioApellido, usuarioTipo, password)
 
         nuevoUsuario.is_superuser = True
         nuevoUsuario.is_staff = True
