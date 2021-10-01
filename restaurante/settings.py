@@ -10,13 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 from os import environ
 
 from dotenv import load_dotenv
 
 load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -137,3 +137,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # cuando se sobreescribe o se modifica el comportamiento original del modelo auth
 AUTH_USER_MODEL = 'cms.UsuarioModel'
+
+# brinda toda la configuracion necesaria a mi libreria de DJANGO REST FRAMEWORK
+REST_FRAMEWORK = {
+    # sirve para indicar que la clase encargada de la authenticacion de las rutas de mi API REST las realizara la libreria rest_framework_simplejwt
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+# encargada de la configuracion de mi libreria de DRF SIMPLE JWT
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'usuarioId',
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+}
+
+# sirve para indicar donde se almacenaran los archivos que se subiran al servidor
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# sirve para indicar la ruta en la cual se ubica los archivos subidos al servidor
+MEDIA_URL = '/assets/'
