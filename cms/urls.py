@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (RegistroController,
                     PlatoController,
                     SubirImagenController,
-                    PlatosController)
+                    PlatosController,
+                    VentaController)
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
@@ -12,6 +13,7 @@ urlpatterns = [
     path('refresh-session', TokenRefreshView.as_view()),
     path('platos', PlatosController.as_view()),
     path('subir-imagen', SubirImagenController.as_view()),
-    path('plato/<int:id>', PlatoController.as_view())
+    path('plato/<int:id>', PlatoController.as_view()),
+    path('pedido', VentaController.as_view()),
 
 ]

@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from .models import PlatoModel, UsuarioModel
 from django.core.files.base import ContentFile
@@ -67,3 +68,14 @@ class ImagenSerializer(serializers.Serializer):
 
         ruta = default_storage.save(archivo.name, ContentFile(archivo.read()))
         return settings.MEDIA_URL + ruta
+
+
+class DetalleVentaSerializer(serializers.Serializer):
+    cantidad = serializers.IntegerField(required=True)
+    producto_id = serializers.IntegerField(required=True)
+
+
+class VentaSerializer(serializers.Serializer):
+    cliente_id = serializers.IntegerField(min_value=0, required=True)
+    vendedor_id = serializers.IntegerField(min_value=0, required=True)
+    detalle = DetalleVentaSerializer(many=True, required=True)
