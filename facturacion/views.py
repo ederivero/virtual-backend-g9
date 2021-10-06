@@ -1,5 +1,7 @@
 from rest_framework.generics import ListCreateAPIView
-from .serializers import ComprobanteSerializer
+
+from .models import ComprobanteModel
+from .serializers import ComprobanteSerializer, ComprobanteModelSerializer
 from rest_framework.response import Response
 from .generarComprobante import crearComprobante
 
@@ -17,10 +19,21 @@ class ComprobanteController(ListCreateAPIView):
 
             tipoComprobante = 2 if tipoComprobante == 'BOLETA' else 1
 
-            crearComprobante(tipoComprobante, pedidoId, numeroDocumento)
-            return Response(data={
-                'message': ''
-            }, status=201)
+            respuesta = crearComprobante(
+                tipoComprobante, pedidoId, numeroDocumento)
+            if isinstance(respuesta, ComprobanteModel):
+                data = ComprobanteModelSerializer(instance=respuesta)
+
+                return Response(data={
+                    'message': 'Comprobante Generado exitosamente',
+                    'content': data.data
+
+                }, status=201)
+            else:
+                return Response(data={
+                    'message': 'Error al crear el comprobante',
+                    'content': respuesta
+                }, status=400)
         else:
             return Response(data={
                 'message': 'error al crear el comprobante',

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from requests.models import Response
+
 from .models import ComprobanteModel
 from cms.models import DetallePedidoModel, PedidoModel
 from django.db import connection
@@ -10,6 +10,13 @@ from os import environ
 
 
 def crearComprobante(tipo_de_comprobante: int, pedido: PedidoModel, documento_cliente: str):
+
+    comprobante_creado = ComprobanteModel.objects.filter(
+        pedido=pedido.pedidoId).first()
+
+    if comprobante_creado:
+        return 'El pedido ya tiene un comprobante'
+
     operacion = 'generar_comprobante'
     if tipo_de_comprobante == 1:
         serie = 'FFF1'  # *
@@ -19,13 +26,14 @@ def crearComprobante(tipo_de_comprobante: int, pedido: PedidoModel, documento_cl
     # usando RAW queries en el ORM
     # with connection.cursor() as cursor:
     #     cursor.execute("SELECT numero FROM comprobantes WHERE serie = '%s' ORDER BY numero DESC LIMIT 1;", (serie))
-    ultimoComprobante = ComprobanteModel.objects.values_list('comprobanteNumero').filter(
+
+    ultimoComprobante = ComprobanteModel.objects.values_list('comprobanteNumero', 'comprobantePDF').filter(
         comprobanteSerie=serie).order_by('-comprobanteNumero').first()
 
     if not ultimoComprobante:
         numero = 1
     else:
-        numero = ultimoComprobante.comprobanteNumero + 1
+        numero = int(ultimoComprobante[0]) + 1
     sunat_transaction = 1  # *
 
     cliente_tipo_de_documento = (
@@ -119,7 +127,7 @@ def crearComprobante(tipo_de_comprobante: int, pedido: PedidoModel, documento_cl
             comprobanteTipo=tipo_de_comprobante,
             comprobantePDF=respuesta.json().get('enlace_del_pdf'),
             comprobanteXML=respuesta.json().get('enlace_del_xml'),
-            comprobanteCDR=respuesta.json().get('enlace_del_xml'),
+            comprobanteCDR=respuesta.json().get('enlace_del_cdr'),
             pedido=pedido)
 
         nuevoComprobante.save()
