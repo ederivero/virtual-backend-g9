@@ -1,0 +1,1 @@
+yarn init => crea un nuevo proyecto en node y crea el archivo package.json (npm init)
