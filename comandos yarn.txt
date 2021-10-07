@@ -1,1 +1,7 @@
 yarn init => crea un nuevo proyecto en node y crea el archivo package.json (npm init)
+
+yarn add nombre_libreria => buscara esa libreria y si la encuentra la instalara
+
+yarn remove nombre_libreria => desinstalara la libreria en donde sea que este ubicada
+
+yarn global add nombre_libreria => instala una libreria de manera global

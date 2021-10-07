@@ -6,15 +6,16 @@
   "author": "eduardo de rivero",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node src/index.js"
-  },
-  "dependencies": {
-    "express": "^4.17.1"
+    "start": "nodemon --exec babel-node src/index.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.5",
     "@babel/node": "^7.15.4",
     "@babel/preset-env": "^7.15.6"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   }
 }
