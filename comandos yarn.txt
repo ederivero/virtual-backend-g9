@@ -5,3 +5,5 @@ yarn add nombre_libreria => buscara esa libreria y si la encuentra la instalara
 yarn remove nombre_libreria => desinstalara la libreria en donde sea que este ubicada
 
 yarn global add nombre_libreria => instala una libreria de manera global
+
+yarn | yarn install => instalara todas las librerias declaradas en el package.json y basandose en el yarn.lock para hacer el mapeo de las librerias mas rapido y mas accesible
