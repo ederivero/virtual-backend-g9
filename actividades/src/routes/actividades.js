@@ -4,6 +4,7 @@ import {
   listarActividades,
   devolverActividad,
   actualizarActividad,
+  eliminarActividad,
 } from "../controllers/actividades";
 
 export const actividades_router = Router();
@@ -14,4 +15,5 @@ actividades_router.get("/actividades", listarActividades);
 actividades_router
   .route("/actividad/:id")
   .get(devolverActividad)
-  .put(actualizarActividad);
+  .put(actualizarActividad)
+  .delete(eliminarActividad);

@@ -68,3 +68,20 @@ export const actualizarActividad = (req, res) => {
     });
   }
 };
+
+export const eliminarActividad = (req, res) => {
+  const { id } = req.params;
+
+  if (actividades.length > id) {
+    actividades.splice(id, 1);
+    return res.json({
+      message: "Actividad eliminada exitosamente",
+      content: actividades,
+    });
+  } else {
+    return res.status(404).json({
+      message: "No se encontro la actividad",
+      content: null,
+    });
+  }
+};
