@@ -1,4 +1,5 @@
 import express, { json } from "express";
+import { tareasRouter } from "../routes/tareas.routes";
 import { conexion } from "./sequelize";
 
 export class Server {
@@ -20,6 +21,7 @@ export class Server {
         message: "Bienvenido a mi API",
       });
     });
+    this.app.use(tareasRouter);
   }
   start() {
     this.app.listen(this.puerto, async () => {
