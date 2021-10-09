@@ -1,4 +1,5 @@
 import { Tarea } from "../config/models";
+import { Op } from "sequelize";
 
 // esto es un middleware porque tenemos el metodo next declarado y este indicara que si la data es correcta podra continuar, caso contrario indicar el error
 export const serializadorTarea = (req, res, next) => {
@@ -88,5 +89,50 @@ export const eliminarTarea = async (req, res) => {
 
   return res.status(resultado !== 0 ? 200 : 404).json({
     message,
+  });
+};
+
+export const devolverTarea = async (req, res) => {
+  const { id } = req.params;
+  // buscara UNA SOLA INSTANCIA y si es que la encuentra, la devolvera , caso contrario, dara null
+  const tarea = await Tarea.findOne({ where: { tareaId: id } });
+
+  return res.json({
+    // si tarea == null entonces el message sera null caso contrario indicara 'Tarea no encontrada'
+    message: tarea ? null : "Tarea no encontrada",
+    content: tarea,
+  });
+};
+
+export const filtrarTareas = async (req, res) => {
+  // /buscarTarea?dias=['Sab']
+  // /buscarTarea?hora=09:00
+  // /buscarTarea?hora=09:00&dias=['Sab']
+  // /buscarTarea?nombre=ejercicio
+  const { dias, hora, nombre } = req.query;
+  // SELECT nombre FROM tareas WHERE nombre LIKE '%...%'
+  const tareas = await Tarea.findAll({
+    where: {
+      tareaNombre: {
+        [Op.like]: "%" + nombre + "%",
+      },
+      tareaHora: hora,
+      // TODO: revisar la forma en la cual se puede hacer un where en un array en postgresql con sequelize
+      tareaDias: {
+        [Op.any]: dias,
+      },
+    },
+    // si queremos indicar que columnas queremos retornar entonces usaremos el atributo attributes indicando en un array la lista de columnas a retornar, ademas si queremos modificar (añadir un alias) a la columna tendremos que agregar un array indicando como primer parametro el nombre de la col. en la bd y como segundo el alias
+    // attributes: [["nombre", "nombrecito"], "tareaDias"],
+    // si queremos EXCLUIR una determinada columna O columnas entonces ahora el attributes seria un objeto en el cual le tendriamos que indicar el exclude que sera un array de todas las columnas que no queremos mostrar
+    // si usamos el exclude e include a la vez solamente tomara en cuenta el exclude
+    attributes: {
+      exclude: ["createdAt", "fecha_de_actualizacion"],
+    },
+    logging: console.log,
+  });
+
+  return res.json({
+    content: tareas,
   });
 };

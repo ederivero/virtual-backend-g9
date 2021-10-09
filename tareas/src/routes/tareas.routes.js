@@ -13,4 +13,7 @@ tareasRouter
 tareasRouter
   .route("/tarea/:id")
   .put(tareasController.actualizarTarea)
-  .delete(tareasController.eliminarTarea);
+  .delete(tareasController.eliminarTarea)
+  .get(tareasController.devolverTarea);
+
+tareasRouter.get("/buscarTarea", tareasController.filtrarTareas);
