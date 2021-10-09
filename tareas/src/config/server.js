@@ -30,6 +30,7 @@ export class Server {
       );
 
       try {
+        // sincronizara todos los modelos creados en el ORM con la bd
         await conexion.sync();
         console.log("Base de datos conectada exitosamente");
       } catch (error) {
