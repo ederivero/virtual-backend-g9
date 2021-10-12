@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import { tareasRouter } from "../routes/tareas.routes";
 import { conexion } from "./sequelize";
+import cors from "cors";
 
 export class Server {
   constructor() {
@@ -9,6 +10,15 @@ export class Server {
     // indicara si el contenido de la izquierda es Verdadero (tiene un valor) entonces usara ese, sino, usara el contenido de la derecha
     // diferencia con el nullish coalescing operator => NCO valida que no sea ni NULL ni UNDEFINED y el logical OR valida que no sea undefined
     this.puerto = process.env.PORT || 8000;
+    // http://expressjs.com/en/resources/middleware/cors.html#configuration-options
+
+    this.app.use(
+      cors({
+        origin: "*", //['https://mipagina.com', 'http://cms.mipagina.com']
+        methods: "PUT", // en el caso de los metodos SIEMPRE el GET sera permitido SIEMPRE
+        allowedHeaders: ["Content-Type"], // indicar las cabeceras que queremos recibir en nuestro backend
+      })
+    );
     this.bodyParser();
     this.rutas();
   }

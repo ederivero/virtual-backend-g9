@@ -111,28 +111,64 @@ export const filtrarTareas = async (req, res) => {
   // /buscarTarea?nombre=ejercicio
   const { dias, hora, nombre } = req.query;
   // SELECT nombre FROM tareas WHERE nombre LIKE '%...%'
-  const tareas = await Tarea.findAll({
-    where: {
-      tareaNombre: {
-        [Op.like]: "%" + nombre + "%",
-      },
-      tareaHora: hora,
-      // TODO: revisar la forma en la cual se puede hacer un where en un array en postgresql con sequelize
-      tareaDias: {
-        [Op.any]: dias,
-      },
-    },
-    // si queremos indicar que columnas queremos retornar entonces usaremos el atributo attributes indicando en un array la lista de columnas a retornar, ademas si queremos modificar (añadir un alias) a la columna tendremos que agregar un array indicando como primer parametro el nombre de la col. en la bd y como segundo el alias
-    // attributes: [["nombre", "nombrecito"], "tareaDias"],
-    // si queremos EXCLUIR una determinada columna O columnas entonces ahora el attributes seria un objeto en el cual le tendriamos que indicar el exclude que sera un array de todas las columnas que no queremos mostrar
-    // si usamos el exclude e include a la vez solamente tomara en cuenta el exclude
-    attributes: {
-      exclude: ["createdAt", "fecha_de_actualizacion"],
-    },
-    logging: console.log,
-  });
 
-  return res.json({
-    content: tareas,
-  });
+  let filtros = [];
+
+  if (nombre) {
+    filtros = [
+      ...filtros,
+      {
+        tareaNombre: {
+          [Op.iLike]: "%" + nombre + "%",
+        },
+      },
+    ];
+  }
+
+  if (hora) {
+    filtros = [
+      ...filtros,
+      {
+        tareaHora: hora,
+      },
+    ];
+  }
+
+  if (dias) {
+    // BUSCAR SI HAY UNA , (coma) Y SI LA HAY, HACER UN SPLIT con todos los elementos
+
+    filtros = [
+      ...filtros,
+      {
+        tareaDias: {
+          [Op.contains]: [dias],
+        },
+      },
+    ];
+  }
+  try {
+    const tareas = await Tarea.findAll({
+      where: {
+        [Op.and]: filtros,
+      },
+      // si queremos indicar que columnas queremos retornar entonces usaremos el atributo attributes indicando en un array la lista de columnas a retornar, ademas si queremos modificar (añadir un alias) a la columna tendremos que agregar un array indicando como primer parametro el nombre de la col. en la bd y como segundo el alias
+      // attributes: [["nombre", "nombrecito"], "tareaDias"],
+      // si queremos EXCLUIR una determinada columna O columnas entonces ahora el attributes seria un objeto en el cual le tendriamos que indicar el exclude que sera un array de todas las columnas que no queremos mostrar
+      // si usamos el exclude e include a la vez solamente tomara en cuenta el exclude
+      attributes: {
+        exclude: ["createdAt", "fecha_de_actualizacion"],
+      },
+      logging: console.log,
+    });
+
+    return res.json({
+      content: tareas,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.json({
+      message: "Valores incorrectos",
+      content: [],
+    });
+  }
 };
