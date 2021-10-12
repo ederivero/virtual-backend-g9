@@ -136,12 +136,13 @@ export const filtrarTareas = async (req, res) => {
 
   if (dias) {
     // BUSCAR SI HAY UNA , (coma) Y SI LA HAY, HACER UN SPLIT con todos los elementos
+    const dias_array = dias.split(",");
 
     filtros = [
       ...filtros,
       {
         tareaDias: {
-          [Op.contains]: [dias],
+          [Op.contains]: dias_array,
         },
       },
     ];
@@ -158,7 +159,7 @@ export const filtrarTareas = async (req, res) => {
       attributes: {
         exclude: ["createdAt", "fecha_de_actualizacion"],
       },
-      logging: console.log,
+      // logging: console.log,
     });
 
     return res.json({

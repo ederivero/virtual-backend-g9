@@ -1,6 +1,8 @@
 import express, { json } from "express";
 import { tareasRouter } from "../routes/tareas.routes";
 import { conexion } from "./sequelize";
+import swagger from "swagger-ui-express";
+import documentacion from "../../swagger.json";
 import cors from "cors";
 
 export class Server {
@@ -31,6 +33,9 @@ export class Server {
         message: "Bienvenido a mi API",
       });
     });
+
+    this.app.use("/docs", swagger.serve, swagger.setup(documentacion));
+
     this.app.use(tareasRouter);
   }
   start() {
