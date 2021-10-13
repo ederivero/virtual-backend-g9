@@ -1,0 +1,12 @@
+{
+  "name": "bodega",
+  "version": "1.0.0",
+  "description": "proyecto usando TS con pasarela de pagos",
+  "main": "index.js",
+  "repository": "https://github.com/ederivero/virtual-backend-g9.git",
+  "author": "Eduardo Ramiro de Rivero Manrique <ederiveroman@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}
