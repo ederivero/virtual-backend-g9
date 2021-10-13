@@ -34,6 +34,20 @@ export class Server {
       });
     });
 
+    // process.env.NODE_ENV === "production"
+    //   ? ((documentacion.host = "https://tareas-express-eduardo.herokuapp.com/"),
+    //     (documentacion.schemes = ["https"]))
+    //   : ((documentacion.host = `http://127.0.0.1;${this.puerto}`),
+    //     (documentacion.schemes = ["http"]));
+
+    if (process.env.NODE_ENV === "production") {
+      documentacion.host = "tareas-express-eduardo.herokuapp.com";
+      documentacion.schemes = ["https"];
+    } else {
+      documentacion.host = `127.0.0.1:${this.puerto}`;
+      documentacion.schemes = ["http"];
+    }
+
     this.app.use("/docs", swagger.serve, swagger.setup(documentacion));
 
     this.app.use(tareasRouter);
