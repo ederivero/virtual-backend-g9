@@ -1,5 +1,6 @@
 import express, { Express, json } from "express";
 import conexion from "./sequelize";
+import usuarioRouter from "../routes/usuario.routes";
 
 export class Server {
   // private => no podra ser accedido desde fuera de la clase
@@ -11,10 +12,15 @@ export class Server {
     this.app = express();
     this.puerto = 8000;
     this.bodyParser();
+    this.rutas();
   }
 
   private bodyParser() {
     this.app.use(json());
+  }
+
+  private rutas() {
+    this.app.use(usuarioRouter);
   }
 
   public start() {
