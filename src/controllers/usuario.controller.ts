@@ -8,6 +8,7 @@ import { sign } from "jsonwebtoken";
 import { TipoUsuario } from "../models/usuarios.model";
 import { LoginDto } from "../dtos/request/login.dto";
 import { compareSync } from "bcrypt";
+import { RequestUser } from "../middlewares/validator";
 
 interface Payload {
   usuarioNombre: string;
@@ -127,9 +128,20 @@ export const login = async (req: Request, res: Response) => {
       message: null,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: "error al hace el login",
-      content: error,
-    });
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: "error al hace el login",
+        content: error.message,
+      });
+    }
   }
+};
+
+export const perfil = (req: RequestUser, res: Response) => {
+  const content = plainToClass(UsuarioDto, req.usuario);
+
+  return res.json({
+    message: "Hola desde el endpoint final",
+    content,
+  });
 };
