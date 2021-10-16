@@ -4,6 +4,7 @@ import usuarioRouter from "../routes/usuario.routes";
 import imagenRouter from "../routes/imagen.routes";
 import productoRouter from "../routes/producto.routes";
 import { v2 } from "cloudinary";
+import compraRouter from "../routes/compra.routes";
 
 export class Server {
   // private => no podra ser accedido desde fuera de la clase
@@ -31,6 +32,7 @@ export class Server {
     this.app.use(usuarioRouter);
     this.app.use(imagenRouter);
     this.app.use(productoRouter);
+    this.app.use(compraRouter);
   }
 
   public start() {

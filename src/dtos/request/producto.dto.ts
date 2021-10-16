@@ -14,7 +14,7 @@ export class CrearProductoDto {
   productoNombre: string;
 
   @IsPositive()
-  @IsDecimal()
+  @IsNumber()
   productoPrecio: number;
 
   @IsNumber()
