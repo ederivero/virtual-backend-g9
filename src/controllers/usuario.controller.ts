@@ -9,6 +9,7 @@ import { TipoUsuario } from "../models/usuarios.model";
 import { LoginDto } from "../dtos/request/login.dto";
 import { compareSync } from "bcrypt";
 import { RequestUser } from "../middlewares/validator";
+import { v2 } from "cloudinary";
 
 interface Payload {
   usuarioNombre: string;
@@ -144,16 +145,20 @@ export const login = async (req: Request, res: Response) => {
 export const perfil = (req: RequestUser, res: Response) => {
   const content = plainToClass(UsuarioDto, req.usuario);
   if (!content.usuarioFoto) {
-    // content.usuarioNombre => saquen las iniciales EDUARDO DE RIVERO  (ED)
-    // MANUEL PEDRO MARTINEZ (MP)
-    // split
-    // JOSE
     console.log(content.usuarioNombre);
     let [nombre, apellido] = content.usuarioNombre.split(" ");
 
     content.usuarioFoto = `https://avatars.dicebear.com/api/initials/${
       nombre[0]
-    }${apellido ? apellido[0] : undefined}.svg`;
+    }${apellido ? apellido[0] : ""}.svg`;
+  } else {
+    const url = v2.url(content.usuarioFoto, {
+      width: 200,
+      angle: 45,
+      transformation: { effect: "cartoonify" },
+    });
+
+    content.usuarioFoto = url;
   }
   return res.json({
     message: "Hola desde el endpoint final",
@@ -161,8 +166,11 @@ export const perfil = (req: RequestUser, res: Response) => {
   });
 };
 
-export const actualizarPerfil = (req: RequestUser, res: Response) => {
-  // TODO
+export const actualizarPerfil = async (req: RequestUser, res: Response) => {
+  // TODO para el lunes
   // hacer un patch para que el usuario pueda modificar su nombre, su correo, su foto o su contraseña
   // req.usuario = ya tienen toda la info del usuario
+  // usuarioFoto: 'usuario/asdasdasdasd
+  // forma de eliminar imagenes de cloudinary
+  // await v2.uploader.destroy('usuario/sdfjljkfjklsfd')
 };

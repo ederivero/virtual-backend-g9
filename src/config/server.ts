@@ -2,6 +2,7 @@ import express, { Express, json } from "express";
 import conexion from "./sequelize";
 import usuarioRouter from "../routes/usuario.routes";
 import imagenRouter from "../routes/imagen.routes";
+import productoRouter from "../routes/producto.routes";
 import { v2 } from "cloudinary";
 
 export class Server {
@@ -29,6 +30,7 @@ export class Server {
   private rutas() {
     this.app.use(usuarioRouter);
     this.app.use(imagenRouter);
+    this.app.use(productoRouter);
   }
 
   public start() {
