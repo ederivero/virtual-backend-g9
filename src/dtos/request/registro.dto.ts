@@ -32,4 +32,8 @@ export class RegistroDto {
   @IsEnum(TipoUsuario)
   @IsOptional()
   usuarioTipo?: TipoUsuario;
+
+  @IsOptional()
+  @IsString()
+  usuarioFoto?: string;
 }

@@ -1,6 +1,8 @@
 import express, { Express, json } from "express";
 import conexion from "./sequelize";
 import usuarioRouter from "../routes/usuario.routes";
+import imagenRouter from "../routes/imagen.routes";
+import { v2 } from "cloudinary";
 
 export class Server {
   // private => no podra ser accedido desde fuera de la clase
@@ -13,6 +15,11 @@ export class Server {
     this.puerto = 8000;
     this.bodyParser();
     this.rutas();
+    v2.config({
+      cloud_name: process.env.CLOUDINARY_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
   }
 
   private bodyParser() {
@@ -21,6 +28,7 @@ export class Server {
 
   private rutas() {
     this.app.use(usuarioRouter);
+    this.app.use(imagenRouter);
   }
 
   public start() {
@@ -28,6 +36,9 @@ export class Server {
       console.log(
         `Servidor corriendo exitosamente en el puerto ${this.puerto}`
       );
+      // puede recibir los siguientes parametros
+      // force => resetear toda la base de datos con los cambios actuales
+      // alter => tratara de cambiar la informacion modificada en el orm. y si no la logra completar, emitira un error
       await conexion.sync();
       console.log("Base de datos conectada exitosamente");
     });

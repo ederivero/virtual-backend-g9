@@ -37,12 +37,13 @@ export const authValidator = async (
       req.usuario = usuario;
     }
 
-    console.log(payload);
-
     next();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.log(error.message);
+      return res.status(401).json({
+        message: error.message,
+        content: null,
+      });
     }
   }
 };
