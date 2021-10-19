@@ -5,6 +5,9 @@ import { Compras, Detalles, Productos } from "../config/models";
 import { CompraDto, DetalleCompraDto } from "../dtos/request/compra.dto";
 import conexion from "../config/sequelize";
 import { RequestUser } from "../middlewares/validator";
+import { configure, preferences } from "mercadopago";
+
+import { CreatePreferencePayload } from "mercadopago/models/preferences/create-payload.model";
 
 export const crearCompra = async (req: RequestUser, res: Response) => {
   const validador = plainToClass(CompraDto, req.body);
@@ -128,6 +131,76 @@ export const crearCompra = async (req: RequestUser, res: Response) => {
     return res.status(500).json({
       message: "Error al crear la compra",
       content: error instanceof Error ? error.message : "",
+    });
+  }
+};
+
+export const crearPreferencia = async (req: Request, res: Response) => {
+  // el metodo configure me sirve para configurar mi mercadoPago en toda la aplicacion, se le tiene que proveer los campos access_token e integrator_id
+  // access_token => token que se usara POR CADA APLICACION (sirve para que MP sepa a que negocio tiene que depositar y ademas en el extracto de cuenta del comprador colocar correctamente el nombre del negocio)
+  // integrator_id => identificacion del desarrollador que efectuo la integracion (sirve para que MP reconozca quien fue el que implemento y asi brindarle mejores beneficios (disminuyen la comision por venta y otros beneficios mas))
+  configure({
+    access_token:
+      "APP_USR-8208253118659647-112521-dd670f3fd6aa9147df51117701a2082e-677408439",
+    integrator_id: "dev_24c65fb163bf11ea96500242ac130004",
+  });
+  const payload: CreatePreferencePayload = {
+    payer: {
+      name: "Lalo",
+      surname: "Landa",
+      // address: {
+      //   street_name: "Falsa",
+      //   street_number: "123",
+      //   zip_code: "1111",
+      // },
+      email: "test_user_46542185@testuser.com",
+      // phone: {
+      //   area_code: "11",
+      //   number: +"22223333",
+      // },
+      identification: {
+        number: "22334445",
+        type: "DNI",
+      },
+    },
+    items: [
+      {
+        id: "12",
+        title: "Yogurt Griego de 1lt.",
+        description: "Sabroso yogurt de tierras griegas",
+        picture_url: "https://...",
+        category_id: "001",
+        quantity: 2,
+        unit_price: 12.5,
+        currency_id: "PEN",
+      },
+    ],
+    payment_methods: {
+      //  excluded_payment_methods => excluir los metodos de pago
+      excluded_payment_methods: [{ id: "master" }, { id: "debmaster" }],
+      //  excluded_payment_types => excluir los TIPOS de pago, que son:
+      //       credit_card
+      // debit_card
+      // atm
+      excluded_payment_types: [{ id: "atm" }],
+      //  installments => numero maximo de cuotas permitido (en el caso que sea una tarjeta de credito)
+      installments: 6,
+    },
+  };
+  try {
+    const rptaMP = await preferences.create(payload);
+
+    console.log(rptaMP);
+
+    return res.json({
+      message: "Preferencia creada exitosamente",
+      content: rptaMP,
+    });
+  } catch (e) {
+    console.log(e);
+
+    return res.json({
+      message: "Error al crear la preferencia",
     });
   }
 };

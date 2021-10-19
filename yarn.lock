@@ -97,6 +97,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/mercadopago@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@types/mercadopago/-/mercadopago-1.5.5.tgz#25ad4fe24bd50d08f0a3524e5b02250cff3e6391"
+  integrity sha512-olovpmbupS0jQphHpciwQx4r4AHJEkPH1XIMnK+5/8Alxjkhd9umXkgab9U4fs4Vogi35jzTjR1BReURsEjk4A==
+
 "@types/mime@^1":
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
