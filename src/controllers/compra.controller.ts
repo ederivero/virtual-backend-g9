@@ -41,20 +41,24 @@ export const crearCompra = async (req: RequestUser, res: Response) => {
 
   const trasaccion = await conexion.transaction();
   try {
+    let total = 0.0;
     // 1. Creo la compra (cabecera de la compra)
     const nuevaCompra = await Compras.create(
       {
         compraFecha: new Date(),
-        compraTotal: 0.0,
+        compraTotal: total,
         usuarioId: req.usuario?.getDataValue("usuarioId"),
       },
       { transaction: trasaccion }
     );
+    console.log(nuevaCompra.toJSON());
 
     // asi seria el uso sin la necesitad de un Promise.all y con un forin sencillo
-    for (const key in validador.detalle) {
-    }
+    // for (const key in validador.detalle) {
+    // }
+
     // asi seria el uso con la espera de un Promise.all (espera la ejecuion de todas las promesas)
+
     await Promise.all(
       validador.detalle.map(async (detalle_compra) => {
         const producto = await Productos.findByPk(detalle_compra.producto, {
@@ -98,9 +102,20 @@ export const crearCompra = async (req: RequestUser, res: Response) => {
             transaction: trasaccion,
           }
         );
-        const compra = await Compras.findByPk(nuevaCompra.getDataValue("id"));
 
-        // await Compras.update({compraTotal: compra?.getDataValue('compraTotal')})
+        total +=
+          detalle_compra.cantidad * producto.getDataValue("productoPrecio");
+        await Compras.update(
+          {
+            compraTotal: total,
+          },
+          {
+            where: {
+              compraId: nuevaCompra.getDataValue("compraId"),
+            },
+            transaction: trasaccion,
+          }
+        );
       })
     );
     await trasaccion.commit();
