@@ -7,6 +7,8 @@
   "author": "Eduardo Ramiro de Rivero Manrique <ederiveroman@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "start": "node ./dist/index.js",
+    "build":"tsc -p .",
     "start:dev": "nodemon src/index.ts"
   },
   "devDependencies": {
