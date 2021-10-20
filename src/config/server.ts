@@ -14,7 +14,7 @@ export class Server {
 
   constructor() {
     this.app = express();
-    this.puerto = process.env.PORT || 8000;
+    this.puerto = process.env.PORT;
     this.app.use(cors());
     this.bodyParser();
     this.rutas();
