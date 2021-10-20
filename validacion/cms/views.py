@@ -1,7 +1,11 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import AllowAny
+# https://www.django-rest-framework.org/api-guide/permissions/
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from .serializers import CustomPayloadSerializer
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.request import Request
+from .permissions import CorreoPermission
 
 
 class CustomPayloadController(TokenObtainPairView):
@@ -25,3 +29,17 @@ class CustomPayloadController(TokenObtainPairView):
                 "content": data.errors,
                 "message": "error de generacion de la jwt"
             })
+
+
+class PerfilUsuario(RetrieveAPIView):
+
+    permission_classes = [IsAuthenticated, CorreoPermission]
+
+    def get(self, request: Request):
+        # me devolver la instancia del usuario y si no hay un AnonymousUser
+        print(request.user)
+        print(request.auth)  # me devolvera la token y si no hay un None
+        return Response(data={
+            'message': 'El usuario es',
+            'content': request.user.usuarioCorreo
+        })
