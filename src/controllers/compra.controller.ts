@@ -192,6 +192,8 @@ export const crearPreferencia = async (req: Request, res: Response) => {
       //  installments => numero maximo de cuotas permitido (en el caso que sea una tarjeta de credito)
       installments: 6,
     },
+    notification_url:
+      "https://bodega-mp-eduardo.herokuapp.com/mp-notificaciones",
   };
   try {
     const rptaMP = await preferences.create(payload);
