@@ -145,6 +145,12 @@ export const crearPreferencia = async (req: Request, res: Response) => {
     integrator_id: "dev_24c65fb163bf11ea96500242ac130004",
   });
   const payload: CreatePreferencePayload = {
+    back_urls: {
+      success: "google.com",
+      failure: "youtube.com",
+      pending: "gmail.com",
+    },
+    auto_return: "approved",
     payer: {
       name: "Lalo",
       surname: "Landa",
@@ -182,7 +188,7 @@ export const crearPreferencia = async (req: Request, res: Response) => {
       //       credit_card
       // debit_card
       // atm
-      excluded_payment_types: [{ id: "atm" }],
+      // excluded_payment_types: [{ id: "atm" }],
       //  installments => numero maximo de cuotas permitido (en el caso que sea una tarjeta de credito)
       installments: 6,
     },
@@ -203,4 +209,13 @@ export const crearPreferencia = async (req: Request, res: Response) => {
       message: "Error al crear la preferencia",
     });
   }
+};
+
+export const mpNotificaciones = (req: Request, res: Response) => {
+  console.log("----------BODY--------------");
+  console.log(req.body);
+  console.log("----------QUERY PARAMS------");
+  console.log(req.query);
+
+  return res.status(200).send("ok");
 };

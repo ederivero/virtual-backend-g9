@@ -5,7 +5,7 @@ import imagenRouter from "../routes/imagen.routes";
 import productoRouter from "../routes/producto.routes";
 import { v2 } from "cloudinary";
 import compraRouter from "../routes/compra.routes";
-
+import cors from "cors";
 export class Server {
   // private => no podra ser accedido desde fuera de la clase
   // readonly => no podra ser modificado su valor afuera del constructor
@@ -15,6 +15,7 @@ export class Server {
   constructor() {
     this.app = express();
     this.puerto = 8000;
+    this.app.use(cors());
     this.bodyParser();
     this.rutas();
     v2.config({
