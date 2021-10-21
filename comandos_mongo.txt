@@ -1,0 +1,18 @@
+NOTA: AHORA LAS TABLAS PASARAN A LLAMARSE COLECCIONES (COLLECTION) Y LOS REGISTROS PASARAN A LLAMARSE DOCUMENTOS (DOCUMENTS)
+
+reemplazar collection_name x tu coleccion
+
+use db_name => creara la bd si no existe y si si existe, usaremos esa bd
+db => mostrara en que bd nos encontramos
+
+db.collection_name.help() =>  | mostrara todos los metodos permitidos para interactuar con nuestra coleccion
+
+db.collection_name.create({data}) => insertara un registro en la coleccion y si no existe, creara la coleccion antes de la insercion
+
+db.collection_name.find() => devolvera todos los registros de esa coleccion y si no existe, no devolvera nada pero no emitira un ERROR
+
+db.collection_name.find({col:'valor'}) => devolvera los registros cuya condicion sea la indicada
+
+se pueden usar operadores como AND OR, IN, NOT IN, O like (REGEX) en MongoDb => https://docs.mongodb.com/manual/reference/operator/query/
+
+db.dropDatabase() => eliminara la bd actual

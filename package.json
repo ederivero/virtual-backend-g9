@@ -1,0 +1,20 @@
+{
+  "name": "veterinaria-mongo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ederivero/virtual-backend-g9.git",
+  "author": "Eduardo Ramiro de Rivero Manrique <ederiveroman@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start:dev": "nodemon src/index.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.1",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

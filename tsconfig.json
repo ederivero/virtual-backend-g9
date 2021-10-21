@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "CommonJS",
+        "strict": true,
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "moduleResolution": "Node",
+        "esModuleInterop": true, // para poder hacer la importacion de una manera mas facil usando alias para cuando querramos importar toda la libreria
+        "removeComments": true,
+        "forceConsistentCasingInFileNames": true // si ponemos el nombre empezando en mayuscula, entonces al momento de hace la compilacion respete el nombre del archivo
+    }
+}
