@@ -1,5 +1,7 @@
-import express, { Express, json } from "express";
+import express, { Express, json, NextFunction } from "express";
+import { HttpError } from "http-errors";
 import { connect } from "mongoose";
+import clienteRouter from "../routes/cliente.routes";
 
 export default class Server {
   private readonly app: Express;
@@ -9,10 +11,17 @@ export default class Server {
     this.app = express();
     this.port = process.env.PORT ?? "8000";
     this.bodyParser();
+    this.routes();
   }
+
   private bodyParser() {
     this.app.use(json());
   }
+
+  private routes() {
+    this.app.use(clienteRouter);
+  }
+
   start() {
     this.app.listen(this.port, async () => {
       console.log(
