@@ -1,6 +1,7 @@
 import { plainToClass } from "class-transformer";
 import { Request, Response } from "express";
 import { HttpError } from "http-errors";
+import { ActualizarClienteDto } from "../dtos/request/actualizar-cliente.dto";
 import { ClienteDto } from "../dtos/request/cliente.dto";
 import { ListarClienteDto } from "../dtos/request/listar-clientes.dto";
 import Cliente from "../models/cliente.model";
@@ -59,4 +60,44 @@ export const listarClientes = async (req: Request, res: Response) => {
   }
 };
 
-export const actualizarProducto = (req: Request, res: Response) => {};
+export const actualizarCliente = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const dto = plainToClass(ActualizarClienteDto, req.body);
+  try {
+    await dto.isValid();
+    const clienteActualizado = await Cliente.findOneAndUpdate(
+      { _id: id },
+      { $set: dto },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      content: clienteActualizado,
+      message: null,
+    });
+  } catch (error) {
+    if (error instanceof HttpError) {
+      return res.status(error.statusCode).json(error);
+    }
+  }
+};
+
+export const eliminarCliente = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const clienteEliminado = await Cliente.findByIdAndDelete(id);
+    // mediante el uso de un operador ternario indicar que si no hubo eliminacion, mostrar un status 404 y en el mssage 'No se encontro el cliente'
+    return res.status(clienteEliminado ? 200 : 404).json({
+      content: clienteEliminado,
+      message: clienteEliminado
+        ? "Cliente eliminado exitosamente"
+        : "No se encontro el cliente",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      content: null,
+      message: "Error al eliminar el cliente",
+    });
+  }
+};
