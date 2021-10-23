@@ -1,10 +1,12 @@
 import { model, Schema } from "mongoose";
+import { IMascota, mascotaSchema } from "./mascota.model";
 
 interface ICliente {
   clienteNombre: string;
   clienteApellido: string;
   clienteCorreo: string;
   clienteDni: string;
+  clienteMascotas: [IMascota];
 }
 
 const clienteSchema = new Schema<ICliente>(
@@ -31,6 +33,10 @@ const clienteSchema = new Schema<ICliente>(
       type: Schema.Types.String,
       maxlength: 8,
       minlength: [8, "El valor minimo es 8"],
+    },
+    clienteMascotas: {
+      type: [mascotaSchema],
+      alias: "mascotas",
     },
   },
   { timestamps: { createdAt: "fecha_creacion", updatedAt: false } }

@@ -1,10 +1,11 @@
-import { Schema } from "mongoose";
+import { Schema, ObjectId } from "mongoose";
 
-interface IMascota {
+export interface IMascota {
   mascotaNombre: string;
   mascotaRaza: string;
   mascotaSexo: "MACHO" | "HEMBRA";
   mascotaFechaNacimiento: Date;
+  _id?: string;
 }
 
 export const mascotaSchema = new Schema<IMascota>(

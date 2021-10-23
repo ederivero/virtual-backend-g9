@@ -1,7 +1,7 @@
-import express, { Express, json, NextFunction } from "express";
-import { HttpError } from "http-errors";
+import express, { Express, json } from "express";
 import { connect } from "mongoose";
 import clienteRouter from "../routes/cliente.routes";
+import mascotaRouter from "../routes/mascota.routes";
 
 export default class Server {
   private readonly app: Express;
@@ -20,6 +20,7 @@ export default class Server {
 
   private routes() {
     this.app.use(clienteRouter);
+    this.app.use(mascotaRouter);
   }
 
   start() {
